@@ -4,6 +4,9 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import store, { history } from './store';
 import App from './containers/app';
+import Header from './components/header.component';
+import Menu from './components/menu.component';
+import Footer from './components/footer.component';
 import * as serviceWorker from './serviceWorker';
 
 import './index.css';
@@ -14,7 +17,10 @@ render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <div>
+                <Header />
+                <Menu />
                 <App />
+                <Footer />
             </div>
         </ConnectedRouter>
     </Provider>,

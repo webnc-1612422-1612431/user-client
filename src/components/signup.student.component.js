@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../css/app.css';
 
-export default class SignUp extends Component {
+export default class SignUpStudent extends Component {
     render() {
         return (
-            <form>
-                <h3>Đăng ký tài khoản người học</h3>
+            <form className="form-center">
+                <br></br>
+                <center><h3>Đăng ký người học</h3></center>
+                <br></br>
 
                 <div className="form-group">
                     <label>Họ tên</label>
