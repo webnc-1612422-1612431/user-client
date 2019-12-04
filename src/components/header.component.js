@@ -180,7 +180,7 @@ export default function Header() {
                                 {visible ? menu : ''}
                             </ul>
                             <div class='navbar-cta'><a class='btn btn-primary' href={!logged ? '/login' : info.role === 'teacher' ? '/create-constract' : '/find-constract'}>
-                                    {!logged ? 'ĐĂNG NHẬP' : info.role === 'teacher' ? 'TẠO HỢP ĐỒNG' : 'TÌM HỢP ĐỒNG'} <up-track tracking-event='click'
+                                    {!logged ? 'ĐĂNG NHẬP' : info.role === 'teacher' ? 'TẠO HỢP ĐỒNG' : 'TÌM GIẢNG VIÊN'} <up-track tracking-event='click'
                                     tracking-location-default='vs' tracking-sublocation='primary_nav_bar'
                                     tracking-label='post_a_job_button' class='hydrated'></up-track></a>
                             </div>
