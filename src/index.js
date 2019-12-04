@@ -5,7 +5,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import store, { history } from './store';
 import App from './containers/app';
 import Header from './components/header.component';
-import Menu from './components/menu.component';
+import Banner from './components/banner.component';
 import Footer from './components/footer.component';
 import * as serviceWorker from './serviceWorker';
 
@@ -18,7 +18,7 @@ render(
         <ConnectedRouter history={history}>
             <div>
                 <Header />
-                <Menu />
+                <Banner />
                 <App />
                 <Footer />
             </div>
