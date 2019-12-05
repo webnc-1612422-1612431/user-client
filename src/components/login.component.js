@@ -59,7 +59,7 @@ export default function Login() {
                 </div>
                 <button type='submit' className='btn btn-primary btn-block'>Đăng nhập</button>
                 <p className='forgot-password text-right'>
-                    <a href='forgot-password'>Quên mật khẩu?</a>
+                    <a href='forgot-pass'>Quên mật khẩu?</a>
                 </p>
             </form>
             <center>
@@ -88,7 +88,23 @@ export default function Login() {
     // for login facebook and google
     function checkUrl() {
         const address = window.location.href;
-        if (address.indexOf('?token=') !== -1) {
+
+        if (address.indexOf('?message=') !== -1) {
+            if (address.indexOf('not-verified') !== -1) {
+                setModalContent('Tài khoản của bạn chưa được kích hoạt');
+            }
+            else if (address.indexOf('invalid-verified') !== -1) {
+                setModalContent('Mã kích hoạt tài khoản không hợp lệ');
+            }
+            else if (address.indexOf('?message=verified') !== -1) {
+                setModalContent('Kích hoạt tài khoản thành công');
+            }
+            else if (address.indexOf('?message=invalid-forgot-pass') !== -1) {
+                setModalContent('Đường dẫn phục hồi tài khoản không hợp lệ');
+            }
+            setShow(true);
+        }
+        else if (address.indexOf('?token=') !== -1) {
             var token = address.substr(address.indexOf('?token=') + '?token='.length);
             if (token.indexOf('#nghiatq') !== -1) {
                 token = token.substr(0, token.indexOf('#nghiatq'));

@@ -81,7 +81,7 @@ export default function Header() {
 
                         // if this page is login or register, auto redirect to home
                         if (!visible) {
-                            window.location.href = '/';
+                            // window.location.href = '/';
                         }
                     }
                 })
