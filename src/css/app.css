@@ -1,5 +1,6 @@
 body {
     background-image: url('https://ptthsv.com/wp-content/uploads/2019/05/Savin-NY-Website-Background-Web.jpg');
+    background: #f2f2f2;
 }
 
 .center {
@@ -70,4 +71,43 @@ body {
     overflow: scroll;
     font-size: 14px;
     margin-bottom: 50px;
+}
+
+.b-name {
+    font-size: 25px;
+}
+
+.intro-container {
+    margin-top: 25px;
+    margin-left: 25px;
+    margin-right: 25px;
+    white-space: pre-line;
+}
+
+.intro-container p {
+    margin-top: -10px;
+    font-size: 15px;
+    line-height: 1.25;
+}
+
+.card-center {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    max-width: 900px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.card-header {
+    background-color: #1d4354;
+    color: white;
+    font-size: 22px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+hr {
+    width: 85%;
+    margin: 15px;
 }
