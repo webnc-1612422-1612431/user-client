@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import config from '../config';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../css/app.css';
 
 const axios = require('axios');
 
@@ -42,6 +40,7 @@ export default function Login() {
                     setModalContent('Đăng nhập không thành công, xin vui lòng thử lại');
                     setShow(true);
                 }
+                localStorage.removeItem('token');
             });
     }
 

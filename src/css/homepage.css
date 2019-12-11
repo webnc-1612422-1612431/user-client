@@ -4003,7 +4003,7 @@ a.list-group-item.active:hover .list-group-item-text {
 .navbar-search-mobile form .dropdown-menu,
 .navbar-search-mobile form .eo-dropdown-menu {
     margin-left: -15px;
-    width: 100vw;
+    width: 00vw;
     border-top: 1px solid #e0e0e0
 }
 
@@ -4370,7 +4370,7 @@ html {
     padding: 0;
     border: none;
     border-top-left-radius: 0;
-    min-width: 218px;
+    min-width: 100%;
     position: absolute;
     top: 100%;
     left: 0;
@@ -4383,7 +4383,7 @@ html {
     background-color: #fff;
     border-radius: 2px;
     background-clip: padding-box;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, .175)
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
 
 @media (min-width:768px) {
@@ -4663,7 +4663,11 @@ body>.eo-dropdown-menu {
 
 @media (min-width:768px) {
     .dropdown:not(.dropdown-secondary) .dropdown-toggle.btn:only-of-type {
-        min-width: 218px
+        min-width: auto;
+        background: transparent;
+        color: black;
+        box-shadow: none;
+        border: 0px;
     }
 }
 
@@ -5879,7 +5883,7 @@ body>.eo-dropdown-menu {
 
 .input-group.input-group-navbar .dropdown-menu,
 .input-group.input-group-navbar .eo-dropdown-menu {
-    min-width: 210px;
+    min-width: auto;
     margin-top: 0
 }
 

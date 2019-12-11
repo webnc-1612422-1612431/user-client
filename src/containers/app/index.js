@@ -10,6 +10,9 @@ import SignUpTeacher from '../../components/signup.teacher.component';
 import SignUpStudent from '../../components/signup.student.component';
 import SignUpSocial from '../../components/signup.social.component';
 import ForgotPass from '../../components/forgot.pass.component';
+import InfoTeacher from '../../components/info.teacher.component';
+import ManageTags from '../../components/manage.tags.component';
+import DetailTeacher from '../../components/detail.teacher.component';
 
 const App = () => (
     <div>
@@ -20,6 +23,9 @@ const App = () => (
             <Route exact path="/sign-up-student" component={SignUpStudent} />
             <Route exact path="/sign-up-social" component={SignUpSocial} />
             <Route exact path="/forgot-pass" component={ForgotPass} />
+            <Route exact path="/info-teacher" component={InfoTeacher} />
+            <Route exact path="/manage-tags" component={ManageTags} />
+            <Route exact path="/detail-teacher" component={DetailTeacher} />
         </main>
     </div>
 );

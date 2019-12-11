@@ -1,67 +1,82 @@
 import React, { useState, useEffect } from 'react';
+import { Col, Modal, Button, Dropdown, DropdownButton } from 'react-bootstrap';
 import config from '../config';
 
 const axios = require('axios');
 
-const menu = <li class='dropdown secondary-menu' role='none'>
-    <ul class='list-unstyled dropdown-menu-subnav' role='menu' aria-label='Browse'>
-        <li role='none'><a href='/cat/math'
-            target='_self' role='menuitem'> Toán <up-track tracking-event='click'
-                tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
-                tracking-label='web_dev_link'
-                tracking-data='{&quot;nav_category&quot;: &quot;Web Dev&quot;}' class='hydrated'></up-track>
-        </a></li>
-        <li role='none'><a
-            href='/cat/physics' target='_self' role='menuitem'> Vật Lý <up-track tracking-event='click' tracking-location-default='vs'
-                tracking-sublocation='subnavigation_bar' tracking-label='mobile_dev_link'
-                tracking-data='{&quot;nav_category&quot;: &quot;Mobile Dev&quot;}' class='hydrated'>
-            </up-track></a></li>
-        <li role='none'><a href='/cat/chemistry'
-            target='_self' role='menuitem'> Hóa Học <up-track tracking-event='click'
-                tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
-                tracking-label='design_link' tracking-data='{&quot;nav_category&quot;: &quot;Design&quot;}'
-                class='hydrated'></up-track></a></li>
-        <li role='none'><a href='cat/literature'
-            target='_self' role='menuitem'> Ngữ Văn <up-track tracking-event='click'
-                tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
-                tracking-label='writing_link'
-                tracking-data='{&quot;nav_category&quot;: &quot;Writing&quot;}' class='hydrated'></up-track>
-        </a></li>
-        <li role='none'><a href='/cat/it' target='_self' role='menuitem'>
-            Tin Học <up-track tracking-event='click' tracking-location-default='vs'
-                tracking-sublocation='subnavigation_bar' tracking-label='admin_support_link'
-                tracking-data='{&quot;nav_category&quot;: &quot;Admin Support&quot;}' class='hydrated'>
-            </up-track></a></li>
-        <li role='none'><a href='/cat/geography' target='_self' role='menuitem'> Địa Lý <up-track tracking-event='click' tracking-location-default='vs'
-            tracking-sublocation='subnavigation_bar' tracking-label='customer_service_link'
-            tracking-data='{&quot;nav_category&quot;: &quot;Customer Service&quot;}' class='hydrated'>
-        </up-track></a></li>
-        <li role='none'><a href='/cat/history'
-            target='_self' role='menuitem'> Lịch Sử <up-track tracking-event='click'
-                tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
-                tracking-label='marketing_link'
-                tracking-data='{&quot;nav_category&quot;: &quot;Marketing&quot;}' class='hydrated'>
-            </up-track></a></li>
-        <li role='none'><a href='/cat/english' target='_self' role='menuitem'>
-            Tiếng Anh <up-track tracking-event='click' tracking-location-default='vs'
-                tracking-sublocation='subnavigation_bar' tracking-label='accounting_link'
-                tracking-data='{&quot;nav_category&quot;: &quot;Accounting&quot;}' class='hydrated'>
-            </up-track></a></li>
-        <li role='none'><a href='/cat' target='_self'
-            role='menuitem'> <b>Tất cả chuyên môn</b> <up-track tracking-event='click'
-                tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
-                tracking-label='view_all_categories_link'
-                tracking-data='{&quot;category&quot;: &quot;See All Categories&quot;}' class='hydrated'>
-            </up-track></a></li>
-    </ul>
-</li>;
-
 const visible = window.location.href.indexOf('/login') === -1 && window.location.href.indexOf('/sign-up') === -1;
+const menu = !visible ? ''
+    : <li class='dropdown secondary-menu' role='none'>
+        <ul class='list-unstyled dropdown-menu-subnav' role='menu' aria-label='Browse'>
+            <li role='none'><a href='/cat/math'
+                target='_self' role='menuitem'> Toán <up-track tracking-event='click'
+                    tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
+                    tracking-label='web_dev_link'
+                    tracking-data='{&quot;nav_category&quot;: &quot;Web Dev&quot;}' class='hydrated'></up-track>
+            </a></li>
+            <li role='none'><a
+                href='/cat/physics' target='_self' role='menuitem'> Vật Lý <up-track tracking-event='click' tracking-location-default='vs'
+                    tracking-sublocation='subnavigation_bar' tracking-label='mobile_dev_link'
+                    tracking-data='{&quot;nav_category&quot;: &quot;Mobile Dev&quot;}' class='hydrated'>
+                </up-track></a></li>
+            <li role='none'><a href='/cat/chemistry'
+                target='_self' role='menuitem'> Hóa Học <up-track tracking-event='click'
+                    tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
+                    tracking-label='design_link' tracking-data='{&quot;nav_category&quot;: &quot;Design&quot;}'
+                    class='hydrated'></up-track></a></li>
+            <li role='none'><a href='cat/literature'
+                target='_self' role='menuitem'> Ngữ Văn <up-track tracking-event='click'
+                    tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
+                    tracking-label='writing_link'
+                    tracking-data='{&quot;nav_category&quot;: &quot;Writing&quot;}' class='hydrated'></up-track>
+            </a></li>
+            <li role='none'><a href='/cat/it' target='_self' role='menuitem'>
+                Tin Học <up-track tracking-event='click' tracking-location-default='vs'
+                    tracking-sublocation='subnavigation_bar' tracking-label='admin_support_link'
+                    tracking-data='{&quot;nav_category&quot;: &quot;Admin Support&quot;}' class='hydrated'>
+                </up-track></a></li>
+            <li role='none'><a href='/cat/geography' target='_self' role='menuitem'> Địa Lý <up-track tracking-event='click' tracking-location-default='vs'
+                tracking-sublocation='subnavigation_bar' tracking-label='customer_service_link'
+                tracking-data='{&quot;nav_category&quot;: &quot;Customer Service&quot;}' class='hydrated'>
+            </up-track></a></li>
+            <li role='none'><a href='/cat/history'
+                target='_self' role='menuitem'> Lịch Sử <up-track tracking-event='click'
+                    tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
+                    tracking-label='marketing_link'
+                    tracking-data='{&quot;nav_category&quot;: &quot;Marketing&quot;}' class='hydrated'>
+                </up-track></a></li>
+            <li role='none'><a href='/cat/english' target='_self' role='menuitem'>
+                Tiếng Anh <up-track tracking-event='click' tracking-location-default='vs'
+                    tracking-sublocation='subnavigation_bar' tracking-label='accounting_link'
+                    tracking-data='{&quot;nav_category&quot;: &quot;Accounting&quot;}' class='hydrated'>
+                </up-track></a></li>
+            <li role='none'><a href='/cat' target='_self'
+                role='menuitem'> <b>Tất cả chuyên môn</b> <up-track tracking-event='click'
+                    tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
+                    tracking-label='view_all_categories_link'
+                    tracking-data='{&quot;category&quot;: &quot;See All Categories&quot;}' class='hydrated'>
+                </up-track></a></li>
+        </ul>
+    </li>;
+
+function getStyleAvatar(url) {
+    return {
+        "background-image": "url('" + url + "')"
+    }
+}
 
 export default function Header() {
 
     const [logged, setLogged] = useState(false);
     const [info, setInfo] = useState('');
+
+    // for upload image
+    const [uploadPercent, setUploadPercent] = useState('');
+    const [fileImage, setFileImage] = useState('');
+    const [avatarStyle, setAvatarStyle] = useState(getStyleAvatar('https://www.songthuanchay.vn/wp-content/uploads/2019/04/a-avatar-0.jpg'));
+
+    // for dialog modal
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         // check if have token or not
@@ -78,15 +93,13 @@ export default function Header() {
                     if (res.status === 200) {
                         setLogged(true);
                         setInfo(res.data);
-
-                        // if this page is login or register, auto redirect to home
-                        if (!visible) {
-                            // window.location.href = '/';
+                        if (res.data.avatar) {
+                            setAvatarStyle(getStyleAvatar(res.data.avatar));
                         }
                     }
                 })
                 .catch(err => {
-                    if (err.response.data) {
+                    if (err.response) {
                         setLogged(false);
                     }
                 })
@@ -169,25 +182,114 @@ export default function Header() {
                                 </up-header-search>
                             </div>
                             <ul class='navbar-nav navbar-lg navbar-subnav navbar-right' role='menubar'>
-                                <li role='none'><a href={logged ? '/profile' : '/sign-up-teacher'}
-                                    target='_self' role='menuitem'> {logged ? <b>{info.fullname}</b> : 'ĐănG ký dạy'} <up-track tracking-event='click'
-                                        tracking-location-default='vs' tracking-sublocation='primary_nav_bar'
-                                        tracking-label='login_link' class='hydrated'></up-track></a></li>
-                                <li role='none'><a href={logged ? '/logout' : '/sign-up-student'}
-                                    target='_self' role='menuitem'> {logged ? 'Đăng xuất' : 'Đăng ký học'} <up-track tracking-event='click'
-                                        tracking-location-default='vs' tracking-sublocation='primary_nav_bar'
-                                        tracking-label='sign_up_link' class='hydrated'></up-track></a></li>
-                                {visible ? menu : ''}
+                                <li role='none'>
+                                    <a href='detail-teacher' target='_self' role='menuitem'><b><u>{!logged ? 'GUEST' : info.role === 'teacher' ? 'TEACHER' : 'STUDENT'}</u></b></a>
+                                </li>
+                                {menu}
                             </ul>
                             <div class='navbar-cta'><a class='btn btn-primary' href={!logged ? '/login' : info.role === 'teacher' ? '/create-constract' : '/find-constract'}>
-                                    {!logged ? 'ĐĂNG NHẬP' : info.role === 'teacher' ? 'TẠO HỢP ĐỒNG' : 'TÌM GIẢNG VIÊN'} <up-track tracking-event='click'
+                                {!logged ? 'ĐĂNG NHẬP' : info.role === 'teacher' ? 'TẠO HỢP ĐỒNG' : 'TÌM GIẢNG VIÊN'} <up-track tracking-event='click'
                                     tracking-location-default='vs' tracking-sublocation='primary_nav_bar'
                                     tracking-label='post_a_job_button' class='hydrated'></up-track></a>
                             </div>
+                            <DropdownButton title={(logged ? info.fullname : 'ĐĂNG KÝ') + ' '} size="sm" className="dropbutton">
+                                <Dropdown.Item href={logged ? '/info-teacher' : '/sign-up-teacher'}>{logged ? 'Cập nhật thông tin' : 'Đăng ký dạy học'}</Dropdown.Item>
+                                <Dropdown.Item href={logged ? '/manage-tags' : '/sign-up-student'}>{logged ? 'Quản lý kỹ năng' : 'Đăng ký học'}</Dropdown.Item>
+                                <Dropdown.Divider />
+                                <Dropdown.Item href={logged ? '/logout' : '/forgot-pass'}>{logged ? 'Đăng xuất' : 'Quên mật khẩu'}</Dropdown.Item>
+                            </DropdownButton>
+                            {
+                                !logged ? '' : <Col xs={1} md={1}>
+                                    <div className="ratio img-responsive img-circle" style={avatarStyle} onClick={() => handleChangeAvatar()}></div>
+                                </Col>
+                            }
                         </div>
                     </div>
                 </nav>
             </up-header-visitor-primary-nav>
+            <Modal show={show} style={{ opacity: 1 }}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Cập nhật ảnh đại diện</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <input type="file" onChange={(e) => setFileImage(e.target.files[0])} ></input>
+                    <center>
+                        <Col xs={5} md={5}>
+                            <div className="ratio img-responsive img-circle" style={avatarStyle} onClick={() => handleChangeAvatar()}></div><br></br>
+                        </Col>
+                    </center>
+                    <progress className="progress" value={uploadPercent} max="100"></progress>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="danger" onClick={(e) => handleUploadAvatar(e)}>Upload</Button>
+                    <Button variant="primary" onClick={() => setShow(false)}>Thoát</Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
+
+    function handleChangeAvatar() {
+        setShow(true);
+    }
+
+    function handleUploadAvatar(e) {
+        if (fileImage === '') {
+            return;
+        }
+
+        var button = e.target;
+        button.disabled = true;
+
+        const fd = new FormData();
+        fd.append('image', fileImage, info.email + '.png');
+        axios.post('https://us-central1-webnc-1612422.cloudfunctions.net/uploadFile', fd, {
+            onUploadProgress: progressEvent => {
+                if (progressEvent.loaded < progressEvent.total) {
+                    setUploadPercent(Math.floor(100 * progressEvent.loaded / progressEvent.total));
+                }
+                else {
+                    setUploadPercent(100);
+                }
+            }
+        })
+            .then(function (res) {
+                console.log(res);
+                button.value = "Upload";
+                button.disabled = false;
+                getAvatar();
+            }.bind(this)).catch(function (err) {
+                console.log(err);
+                button.value = "Lỗi";
+            }.bind(this));
+    }
+
+    function getAvatar() {
+        var imgUrl = 'https://firebasestorage.googleapis.com/v0/b/webnc-1612422.appspot.com/o/' + info.email + '.png';
+        axios.get(imgUrl).then(res => {
+            if (res && res.data) {
+                var fullUrl = imgUrl + '?alt=media&token=' + res.data.downloadTokens;
+                setAvatarStyle(getStyleAvatar(fullUrl));
+                saveAvatarToServer(fullUrl);
+            }
+            else {
+                console.log(res);
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
+    function saveAvatarToServer(fullUrl) {
+        const token = localStorage.getItem('token');
+        axios.post(config['server-domain'] + 'profile/avatar', {
+            email: info.email,
+            avatar: fullUrl
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => { })
+            .catch(err => { });
+    }
 }

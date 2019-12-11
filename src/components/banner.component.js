@@ -39,9 +39,7 @@ const banner = <section data-qa-section="hero"
     </div>
 </section>
 
-const visible = window.location.href.indexOf('/login') === -1 
-&& window.location.href.indexOf('/sign-up') === -1 
-&& window.location.href.indexOf('/forgot-pass') === -1;
+const visible = window.location.href.indexOf(window.location.host) + window.location.host.length + 3 > window.location.href.length
 
 export default function Banner() {
     return visible ? banner : "";

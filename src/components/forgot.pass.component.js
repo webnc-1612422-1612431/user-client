@@ -72,14 +72,14 @@ export default function ForgotPass() {
             token: token
         })
             .then(res => {
-                if (res.data) {
+                if (res.data && res.data.message) {
                     setModalContent(res.data.message);
                     setShow(true);
                     setSuccess(true);
                 }
             })
             .catch(err => {
-                if (err.response.data) {
+                if (err.response && err.response.data && err.response.data.message) {
                     setModalContent(err.response.data.message);
                     setShow(true);
                 }
@@ -94,6 +94,10 @@ export default function ForgotPass() {
                 <div className='center'>
                     <button type='submit' className='btn btn-primary btn-block'>Xác nhận</button>
                 </div>
+                <p className="forgot-password text-right">
+                    Đã có tài khoản? <a href="login">Đăng nhập?</a>
+                </p>
+                <br></br><br></br><br></br><br></br><br></br><br></br>
             </form>
             <Modal show={show} style={{ opacity: 1 }}>
                 <Modal.Header closeButton>
