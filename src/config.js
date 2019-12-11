@@ -1,8 +1,8 @@
 // These exports are for localhost
 // eslint-disable-next-line
 var exports_1 = {
-    'client-domain': '//localhost:3001/',
-    'server-domain': '//localhost:3000/'
+    'client-domain': '//localhost:5000/',
+    'server-domain': '//localhost:6000/'
 };
 
 // These exports are for uploading to heroku
@@ -12,4 +12,4 @@ var exports_2 = {
     'server-domain': 'http://userserver-422-431.herokuapp.com/'
 };
 
-export default exports_2;
+export default exports_1;
