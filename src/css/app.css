@@ -99,10 +99,19 @@ body {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
+.card-small {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    width: 300px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 .card-header {
     background-color: #1d4354;
     color: white;
-    font-size: 22px;
+    font-size: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -110,4 +119,29 @@ body {
 hr {
     width: 85%;
     margin: 15px;
+}
+
+.container-list {
+    max-height: 630px;
+    width: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.card-list {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    max-width: 85%;
+}
+
+.banner {
+    margin-top: -150px;
+    padding-top: 150px;
+}
+
+.sort-list {
+    float: right;
+    font-size: 18px;
 }

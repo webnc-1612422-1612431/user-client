@@ -23,7 +23,7 @@ export default function InfoTeacher() {
                 .then(res => {
                     if (res.status === 200) {
                         if (res.data) {
-                            if (res.data.role == 'teacher') {
+                            if (res.data.role === 'teacher') {
                                 setInfo(res.data);
                                 var date = new Date(res.data.birthday);
                                 if (date.getUTCDate() < date.getDate()) {

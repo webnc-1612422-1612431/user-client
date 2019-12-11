@@ -1,7 +1,8 @@
 import React from "react";
+import ListTeacher from './list.teacher.component';
 
-const banner = <section data-qa-section="hero"
-    class="d-flex align-items-center text-left homepage-hero admin hero-large hero-with-image-section">
+var banner = <div><section data-qa-section="hero"
+    class="d-flex align-items-center text-left homepage-hero admin hero-large hero-with-image-section banner">
     <div class="container-visitor py-10 mb-5">
         <div class="row">
             <div class="col-xs-12">
@@ -36,8 +37,10 @@ const banner = <section data-qa-section="hero"
     <div class="bottom-freelancer-bar vs-color-white pb-10 ">
         <div class="container-visitor text-right pr-xl-60"><strong data-qa="brand-hero-name">Get a tutor</strong><small class="mx-5">|</small><small data-qa="brand-hero-position"><span
             class="d-none d-md-inline"></span>Mang đến sự hoàn hảo</small></div>
-    </div>
+    </div><br></br>
 </section>
+    <ListTeacher />
+</div>
 
 const visible = window.location.href.indexOf(window.location.host) + window.location.host.length + 3 > window.location.href.length
 

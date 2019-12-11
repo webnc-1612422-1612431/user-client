@@ -8,49 +8,49 @@ const visible = window.location.href.indexOf('/login') === -1 && window.location
 const menu = !visible ? ''
     : <li class='dropdown secondary-menu' role='none'>
         <ul class='list-unstyled dropdown-menu-subnav' role='menu' aria-label='Browse'>
-            <li role='none'><a href='/cat/math'
+            <li role='none'><a href='/list-teacher?major=math'
                 target='_self' role='menuitem'> Toán <up-track tracking-event='click'
                     tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
                     tracking-label='web_dev_link'
                     tracking-data='{&quot;nav_category&quot;: &quot;Web Dev&quot;}' class='hydrated'></up-track>
             </a></li>
             <li role='none'><a
-                href='/cat/physics' target='_self' role='menuitem'> Vật Lý <up-track tracking-event='click' tracking-location-default='vs'
+                href='/list-teacher?major=physics' target='_self' role='menuitem'> Vật Lý <up-track tracking-event='click' tracking-location-default='vs'
                     tracking-sublocation='subnavigation_bar' tracking-label='mobile_dev_link'
                     tracking-data='{&quot;nav_category&quot;: &quot;Mobile Dev&quot;}' class='hydrated'>
                 </up-track></a></li>
-            <li role='none'><a href='/cat/chemistry'
+            <li role='none'><a href='/list-teacher?major=chemistry'
                 target='_self' role='menuitem'> Hóa Học <up-track tracking-event='click'
                     tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
                     tracking-label='design_link' tracking-data='{&quot;nav_category&quot;: &quot;Design&quot;}'
                     class='hydrated'></up-track></a></li>
-            <li role='none'><a href='cat/literature'
+            <li role='none'><a href='list-teacher?major=literature'
                 target='_self' role='menuitem'> Ngữ Văn <up-track tracking-event='click'
                     tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
                     tracking-label='writing_link'
                     tracking-data='{&quot;nav_category&quot;: &quot;Writing&quot;}' class='hydrated'></up-track>
             </a></li>
-            <li role='none'><a href='/cat/it' target='_self' role='menuitem'>
+            <li role='none'><a href='/list-teacher?major=it' target='_self' role='menuitem'>
                 Tin Học <up-track tracking-event='click' tracking-location-default='vs'
                     tracking-sublocation='subnavigation_bar' tracking-label='admin_support_link'
                     tracking-data='{&quot;nav_category&quot;: &quot;Admin Support&quot;}' class='hydrated'>
                 </up-track></a></li>
-            <li role='none'><a href='/cat/geography' target='_self' role='menuitem'> Địa Lý <up-track tracking-event='click' tracking-location-default='vs'
+            <li role='none'><a href='/list-teacher?major=geography' target='_self' role='menuitem'> Địa Lý <up-track tracking-event='click' tracking-location-default='vs'
                 tracking-sublocation='subnavigation_bar' tracking-label='customer_service_link'
                 tracking-data='{&quot;nav_category&quot;: &quot;Customer Service&quot;}' class='hydrated'>
             </up-track></a></li>
-            <li role='none'><a href='/cat/history'
+            <li role='none'><a href='/list-teacher?major=history'
                 target='_self' role='menuitem'> Lịch Sử <up-track tracking-event='click'
                     tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
                     tracking-label='marketing_link'
                     tracking-data='{&quot;nav_category&quot;: &quot;Marketing&quot;}' class='hydrated'>
                 </up-track></a></li>
-            <li role='none'><a href='/cat/english' target='_self' role='menuitem'>
+            <li role='none'><a href='/list-teacher?major=english' target='_self' role='menuitem'>
                 Tiếng Anh <up-track tracking-event='click' tracking-location-default='vs'
                     tracking-sublocation='subnavigation_bar' tracking-label='accounting_link'
                     tracking-data='{&quot;nav_category&quot;: &quot;Accounting&quot;}' class='hydrated'>
                 </up-track></a></li>
-            <li role='none'><a href='/cat' target='_self'
+            <li role='none'><a href='/list-teacher?major=all' target='_self'
                 role='menuitem'> <b>Tất cả chuyên môn</b> <up-track tracking-event='click'
                     tracking-location-default='vs' tracking-sublocation='subnavigation_bar'
                     tracking-label='view_all_categories_link'
@@ -183,7 +183,7 @@ export default function Header() {
                             </div>
                             <ul class='navbar-nav navbar-lg navbar-subnav navbar-right' role='menubar'>
                                 <li role='none'>
-                                    <a href='detail-teacher' target='_self' role='menuitem'><b><u>{!logged ? 'GUEST' : info.role === 'teacher' ? 'TEACHER' : 'STUDENT'}</u></b></a>
+                                    <a href='list-teacher' target='_self' role='menuitem'><b><u>{!logged ? 'GUEST' : info.role === 'teacher' ? 'TEACHER' : 'STUDENT'}</u></b></a>
                                 </li>
                                 {menu}
                             </ul>
@@ -257,9 +257,11 @@ export default function Header() {
                 button.value = "Upload";
                 button.disabled = false;
                 getAvatar();
+                // eslint-disable-next-line
             }.bind(this)).catch(function (err) {
                 console.log(err);
                 button.value = "Lỗi";
+                // eslint-disable-next-line
             }.bind(this));
     }
 

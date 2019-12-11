@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Form } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { WithContext as ReactTags } from 'react-tag-input';
 import config from '../config';
 import '../css/tags.css';

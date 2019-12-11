@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Container, Row, Col, Card } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card } from 'react-bootstrap';
 import { WithContext as ReactTags } from 'react-tag-input';
 import ShowMoreText from 'react-show-more-text';
 import StarRatings from 'react-star-ratings';
@@ -15,28 +15,29 @@ export default function DetailTeacher() {
     const [tags, setTags] = useState([]);
     const [avatarStyle, setAvatarStyle] = useState(getStyleAvatar('https://www.songthuanchay.vn/wp-content/uploads/2019/04/a-avatar-0.jpg'));
 
-    const [show, setShow] = useState(false);
-    const [modalContent, setModalContent] = useState('');
-
     useEffect(() => {
-        axios.get(config['server-domain'] + 'public/get', {
-            params: {
-                email: 'tonystrinh@gmail.com'
-            }
-        })
-            .then(res => {
-                if (res.status === 200) {
-                    setInfo(res.data);
-                    setIntroduction(res.data.introduction);
-                    setTags(res.data.tags);
-                    if (res.data.avatar) {
-                        setAvatarStyle(getStyleAvatar(res.data.avatar));
-                    }
+        const address = window.location.href;
+        if (address.indexOf('?email=') !== -1) {
+            var emailParams = address.substr(address.indexOf('?email=') + '?email='.length);
+            axios.get(config['server-domain'] + 'public/get', {
+                params: {
+                    email: emailParams
                 }
             })
-            .catch(err => {
-                window.location.href = '/';
-            })
+                .then(res => {
+                    if (res.status === 200) {
+                        setInfo(res.data);
+                        setIntroduction(res.data.introduction || '');
+                        setTags(res.data.tags);
+                        if (res.data.avatar) {
+                            setAvatarStyle(getStyleAvatar(res.data.avatar));
+                        }
+                    }
+                })
+                .catch(err => {
+                    window.location.href = '/';
+                })
+        }
     }, []);
 
 
