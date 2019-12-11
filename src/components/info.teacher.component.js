@@ -64,9 +64,16 @@ export default function InfoTeacher() {
         }
     }
 
+    function setPrice(value) {
+        if (info) {
+            setInfo({ ...info, price: value });
+        }
+    }
+
     function handleSubmit(e) {
         e.preventDefault();
         info.birthday = birthday;
+        alert(info.price);
 
         const token = localStorage.getItem('token');
         axios.post(config['server-domain'] + 'profile/update-info', {
@@ -116,8 +123,12 @@ export default function InfoTeacher() {
                         </div>
                         <div class="col-sm">
                             <div className="form-group">
-                                <label>Bài tự giới thiệu</label>
-                                <textarea className="form-control text-area" rows="15" value={info.introduction} onChange={(e) => setIntroduction(e.target.value)}></textarea>
+                                <label><u>Bài tự giới thiệu</u></label>
+                                <textarea className="form-control text-area" rows="11" value={info.introduction} onChange={(e) => setIntroduction(e.target.value)}></textarea>
+                            </div>
+                            <div className="form-group">
+                                <label>Giá trên giờ</label>
+                                <input required type="number" className="form-control" placeholder="" value={info.price} onChange={(e) => setPrice(e.target.value)} />
                             </div>
                         </div>
                     </div>
