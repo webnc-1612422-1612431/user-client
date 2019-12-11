@@ -12,4 +12,4 @@ var exports_2 = {
     'server-domain': 'https://userserver-422-431.herokuapp.com/'
 };
 
-export default exports_1;
+export default exports_2;
