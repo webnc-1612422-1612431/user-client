@@ -73,7 +73,6 @@ export default function InfoTeacher() {
     function handleSubmit(e) {
         e.preventDefault();
         info.birthday = birthday;
-        alert(info.price);
 
         const token = localStorage.getItem('token');
         axios.post(config['server-domain'] + 'profile/update-info', {

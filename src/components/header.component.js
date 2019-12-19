@@ -195,6 +195,7 @@ export default function Header() {
                             <DropdownButton title={(logged ? info.fullname : 'ĐĂNG KÝ') + ' '} size="sm" className="dropbutton">
                                 <Dropdown.Item href={logged ? '/info-teacher' : '/sign-up-teacher'}>{logged ? 'Cập nhật thông tin' : 'Đăng ký dạy học'}</Dropdown.Item>
                                 <Dropdown.Item href={logged ? '/manage-tags' : '/sign-up-student'}>{logged ? 'Quản lý kỹ năng' : 'Đăng ký học'}</Dropdown.Item>
+                                <Dropdown.Item href='change-pass'>Đổi mật khẩu</Dropdown.Item>
                                 <Dropdown.Divider />
                                 <Dropdown.Item href={logged ? '/logout' : '/forgot-pass'}>{logged ? 'Đăng xuất' : 'Quên mật khẩu'}</Dropdown.Item>
                             </DropdownButton>

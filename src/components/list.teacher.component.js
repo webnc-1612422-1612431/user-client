@@ -4,11 +4,13 @@ import config from '../config';
 import '../css/tags.css';
 
 const axios = require('axios');
+const profilePerPage = 3;
 var teachersArray;
 
 export default function ListTeacher() {
 
     const [listTeacherHTML, setListTeacherHTML] = useState('');
+    const [paginationHTML, setPaginationHTML] = useState('');
 
     if (window.location.href.indexOf('?major=') !== -1) {
         var major = window.location.href.substr(window.location.href.indexOf('?major=') + '?major='.length);
@@ -26,8 +28,8 @@ export default function ListTeacher() {
             .then((res) => {
                 if (res.status === 200) {
                     teachersArray = res.data.teachers;
-                    setupListTeacher(teachersArray);
-                    setupPagination(teachersArray);
+                    setupListTeacher(teachersArray, 1);
+                    setupPagination(teachersArray, 1);
                 }
             })
             .catch(err => {
@@ -50,15 +52,23 @@ export default function ListTeacher() {
             <Card.Footer>
                 <center>
                     <Pagination>
-                        {/* {paginationHTML} */}
+                        {paginationHTML}
                     </Pagination>
                 </center>
             </Card.Footer>
         </Card>
     );
 
-    function setupListTeacher(data) {
+    function setupListTeacher(data, currentPage) {
         var resultHTML = data.map((info, index) => {
+
+            // filter for paging
+            const start = (currentPage - 1) * profilePerPage;
+            const end = start + profilePerPage - 1;
+            if (index < start || index > end) {
+                return;
+            }
+
             const avatarHTML = {
                 "background-image": "url('" + info.avatar + "')"
             }
@@ -92,23 +102,25 @@ export default function ListTeacher() {
         setListTeacherHTML(<Row>{resultHTML}</Row>);
     }
 
-    function setupPagination(data) {
+    function setupPagination(data, currentPage) {
 
-        // const numberOfPage = Math.ceil(data.length / 1);
+        const numberOfPage = Math.ceil(data.length / profilePerPage);
 
-        // var resultHTML = [<Pagination.First />, <Pagination.Prev />];
-        // for (var i = 1; i <= numberOfPage; i++) {
-        //     resultHTML.push(<Pagination.Item onClick={() => gotoPage(i)} active={currentPage == i ? true : false}>{i}</Pagination.Item>)
-        // }
-        // resultHTML.push(<Pagination.Next />);
-        // resultHTML.push(<Pagination.Last />);
+        var resultHTML = [<Pagination.First onClick={() => gotoPage(1)}/>, <Pagination.Prev onClick={() => gotoPage(currentPage == 1 ? 1 : (currentPage - 1))}/>];
+        for (var i = 1; i <= numberOfPage; i++) {
+            const index = i;
+            resultHTML.push(<Pagination.Item onClick={() => gotoPage(index)} active={currentPage == index ? true : false}>{index}</Pagination.Item>)
+        }
+        resultHTML.push(<Pagination.Next onClick={() => gotoPage(currentPage == numberOfPage ? numberOfPage : (currentPage + 1))} />);
+        resultHTML.push(<Pagination.Last onClick={() => gotoPage(numberOfPage)}/>);
 
-        // setPaginationHTML(resultHTML);
+        setPaginationHTML(resultHTML);
     }
 
-    // function gotoPage(i) {
-    //     setPaginationHTML(teachersArray);
-    // }
+    function gotoPage(i) {
+        setupPagination(teachersArray, i);
+        setupListTeacher(teachersArray, i);
+    }
 }
 
 function abbreviateNumber(number) {
