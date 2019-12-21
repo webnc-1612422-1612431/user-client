@@ -193,8 +193,8 @@ export default function Header() {
                                     tracking-label='post_a_job_button' class='hydrated'></up-track></a>
                             </div>
                             <DropdownButton title={(logged ? info.fullname : 'ĐĂNG KÝ') + ' '} size="sm" className="dropbutton">
-                                <Dropdown.Item href={logged ? '/info-teacher' : '/sign-up-teacher'}>{logged ? 'Cập nhật thông tin' : 'Đăng ký dạy học'}</Dropdown.Item>
-                                <Dropdown.Item href={logged ? '/manage-tags' : '/sign-up-student'}>{logged ? 'Quản lý kỹ năng' : 'Đăng ký học'}</Dropdown.Item>
+                                <Dropdown.Item href={logged ? (info.role === 'teacher' ? '/info-teacher' : 'info-student') : '/sign-up-teacher'}>{logged ? 'Cập nhật thông tin' : 'Đăng ký dạy học'}</Dropdown.Item>
+                                <Dropdown.Item href={logged ? (info.role === 'teacher' ? '/manage-tags' : 'manage-contracts') : '/sign-up-student'}>{logged ? (info.role === 'teacher' ? 'Quản lý kỹ năng' : 'Danh sách hợp đồng') : 'Đăng ký học'}</Dropdown.Item>
                                 <Dropdown.Item href='change-pass'>Đổi mật khẩu</Dropdown.Item>
                                 <Dropdown.Divider />
                                 <Dropdown.Item href={logged ? '/logout' : '/forgot-pass'}>{logged ? 'Đăng xuất' : 'Quên mật khẩu'}</Dropdown.Item>

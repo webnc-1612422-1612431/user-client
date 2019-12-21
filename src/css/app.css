@@ -105,15 +105,22 @@ body {
     margin-top: 30px;
     margin-bottom: 30px;
     width: 300px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .card-header {
-    background-color: #1d4354;
+    background-color: #004666;
     color: white;
     font-size: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
+}
+
+.card-header-small {
+    background-color: darkgreen;
+    color: white;
+    font-size: 16px;
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 hr {
@@ -133,7 +140,7 @@ hr {
     margin-right: auto;
     margin-top: 30px;
     margin-bottom: 30px;
-    max-width: 85%;
+    max-width: 80%;
 }
 
 .banner {
@@ -144,4 +151,27 @@ hr {
 .sort-list {
     float: right;
     font-size: 18px;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.bar {
+    background-color: #f8f8f8;
+    height: 60px;
+}
+
+.navbar-brand img {
+    height: 20px;
+}
+
+.filtered-list .filter {
+    margin-bottom: 21px;
+}
+
+.list-friends {
+    max-height: 210px;
+    overflow: hidden;
+    overflow-y: scroll;
 }

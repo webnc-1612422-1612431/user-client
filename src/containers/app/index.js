@@ -1,6 +1,8 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'font-awesome/css/font-awesome.min.css';
+import '../../css/chat.css';
 import '../../css/homepage.css';
 import '../../css/app.css';
 
@@ -15,6 +17,7 @@ import ManageTags from '../../components/manage.tags.component';
 import DetailTeacher from '../../components/detail.teacher.component';
 import ListTeacher from '../../components/list.teacher.component';
 import ChangePass from '../../components/changepass.component';
+import InfoStudent from '../../components/info.student.component';
 
 const App = () => (
     <div>
@@ -26,10 +29,11 @@ const App = () => (
             <Route exact path="/sign-up-social" component={SignUpSocial} />
             <Route exact path="/forgot-pass" component={ForgotPass} />
             <Route exact path="/info-teacher" component={InfoTeacher} />
+            <Route exact path="/info-student" component={InfoStudent} />
             <Route exact path="/manage-tags" component={ManageTags} />
             <Route exact path="/detail-teacher" component={DetailTeacher} />
-            <Route exact path="/list-teacher" component={ListTeacher}/>
-            <Route exact path="/change-pass" component={ChangePass}/>
+            <Route exact path="/list-teacher" component={ListTeacher} />
+            <Route exact path="/change-pass" component={ChangePass} />
         </main>
     </div>
 );

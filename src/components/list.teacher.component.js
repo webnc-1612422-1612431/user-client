@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Pagination, Card, Col, Row, Container } from 'react-bootstrap';
+import StarRatings from 'react-star-ratings';
 import config from '../config';
 import '../css/tags.css';
 
@@ -33,9 +34,10 @@ export default function ListTeacher() {
                 }
             })
             .catch(err => {
-                alert(err)
                 window.location.href = '/';
             })
+            
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [major]);
 
     return (
@@ -66,33 +68,40 @@ export default function ListTeacher() {
             const start = (currentPage - 1) * profilePerPage;
             const end = start + profilePerPage - 1;
             if (index < start || index > end) {
-                return;
+                return '';
             }
 
             const avatarHTML = {
-                "background-image": "url('" + info.avatar + "')"
+                "background-image": "url('" + info.avatar + "')",
+                "padding": "75%",
+                "margin-left": "-10px"
             }
             return <Col>
                 <Card className="card-small">
-                    <Card.Header className="card-header">{info.fullname}</Card.Header>
+                    <Card.Header className="card-header-small">{info.fullname}</Card.Header>
                     <Card.Body>
                         <Container>
                             <Row>
                                 <Col xs={1}><div className="ratio img-responsive img-circle" style={avatarHTML}></div></Col>
-                                <Col xs={8}>
+                                <Col>
                                     <b>{localizeDegree(info.degree)}</b><br></br>
-                                    {info.address.substr(0, 25) + '...'}
+                                    Chuyên môn: <b>{localizeMajor(info.major)}</b>
+                                    <br></br>
+                                    Giá trên giờ: <b>{abbreviateNumber(info.price)}</b>
                                     <br></br><br></br>
-                                    <Button size="sm" href={'detail-teacher?email=' + info.email}>Chi tiết</Button>
+                                    <Button size="sm" href={'detail-teacher?email=' + info.email}>CHI TIẾT</Button>
                                 </Col>
                             </Row>
                             <Row>
-                                <Col style={{ "margin-top": "-35px" }}>
-                                    <b>{abbreviateNumber(info.price)} VND</b><br></br>
-                                    Giá / Giờ
-                                    </Col>
+                                <Col style={{ "margin-top": "-20px" }}>
+                                    <StarRatings
+                                        rating={4.5}
+                                        starDimension="13px"
+                                        starSpacing="0px"
+                                        starRatedColor="green"
+                                    /><br></br>ĐGiá: 4.5/5
+                                </Col>
                             </Row>
-                            <hr style={{ "width": "200px" }}></hr>
                         </Container>
                     </Card.Body>
                 </Card>
@@ -106,13 +115,13 @@ export default function ListTeacher() {
 
         const numberOfPage = Math.ceil(data.length / profilePerPage);
 
-        var resultHTML = [<Pagination.First onClick={() => gotoPage(1)}/>, <Pagination.Prev onClick={() => gotoPage(currentPage == 1 ? 1 : (currentPage - 1))}/>];
+        var resultHTML = [<Pagination.First onClick={() => gotoPage(1)} />, <Pagination.Prev onClick={() => gotoPage(currentPage === 1 ? 1 : (currentPage - 1))} />];
         for (var i = 1; i <= numberOfPage; i++) {
             const index = i;
-            resultHTML.push(<Pagination.Item onClick={() => gotoPage(index)} active={currentPage == index ? true : false}>{index}</Pagination.Item>)
+            resultHTML.push(<Pagination.Item onClick={() => gotoPage(index)} active={currentPage === index ? true : false}>{index}</Pagination.Item>)
         }
-        resultHTML.push(<Pagination.Next onClick={() => gotoPage(currentPage == numberOfPage ? numberOfPage : (currentPage + 1))} />);
-        resultHTML.push(<Pagination.Last onClick={() => gotoPage(numberOfPage)}/>);
+        resultHTML.push(<Pagination.Next onClick={() => gotoPage(currentPage === numberOfPage ? numberOfPage : (currentPage + 1))} />);
+        resultHTML.push(<Pagination.Last onClick={() => gotoPage(numberOfPage)} />);
 
         setPaginationHTML(resultHTML);
     }
