@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, ListGroup } from 'react-bootstrap';
-import { Widget, addResponseMessage, setQuickButtons } from 'react-chat-widget';
+import { Widget, addUserMessage, addResponseMessage, setQuickButtons, dropMessages } from 'react-chat-widget';
+
+// firebase section
+import firebase from '../firebase';
+var myEmail = localStorage.getItem('email') || 'tbngoc.khtn@gmail.com';
 
 export default function Footer() {
 
@@ -8,18 +12,41 @@ export default function Footer() {
     const [show, setShow] = useState(false);
     const [listFriends, setListFriends] = useState([]);
     const [listFriendsHTML, setListFriendsHTML] = useState([]);
+    const [currentRoom, setcurrentRoom] = useState('');
 
-    const [friendName, setFriendName] = useState('');
-
+    // for chat box
     setQuickButtons([{
         "label": "Danh sách bạn bè",
         "value": "chat-history"
     }]);
 
     useEffect(() => {
-        const fromServer = ['Trịnh Quang Nghĩa', 'Trần Bá Ngọc', 'Đặng Hoài Nam']
-        setListFriends(fromServer);
-        handleFindFriend('', fromServer);
+
+        // get info from firebase
+        firebase.database().ref().on('value', snap => {
+            let friendFromFirebase = [];
+            snap.forEach(childNode => {
+                if (childNode.val() && childNode.val().metadata && childNode.val().metadata.u1 === myEmail) {
+                    const box = {
+                        peerEmail: childNode.val().metadata.u2,
+                        messageId: childNode.key,
+                        friendName: childNode.val().metadata.friendName
+                    };
+                    friendFromFirebase.push(box);
+                }
+                else if (childNode.val() && childNode.val().metadata && childNode.val().metadata.u2 === myEmail) {
+                    const box = {
+                        peerEmail: childNode.val().metadata.u1,
+                        messageId: childNode.key,
+                        friendName: childNode.val().metadata.friendName
+                    };
+                    friendFromFirebase.push(box);
+                }
+            });
+            setListFriends(friendFromFirebase);
+            handleFindFriend(friendFromFirebase);
+        });
+
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -80,7 +107,7 @@ export default function Footer() {
                 </Modal.Header>
                 <Modal.Body>
                     <div className="list filtered-list">
-                        <input className="filter form-control" onInput={(e) => handleFindFriend(e.target.value)} type="text" placeholder="Tìm kiếm..." />
+                        <input className="filter form-control" onInput={(e) => handleFindFriend(listFriends, e.target.value)} type="text" placeholder="Tìm kiếm..." />
                     </div>
                     <ListGroup className='list-friends'>
                         {listFriendsHTML}
@@ -91,27 +118,60 @@ export default function Footer() {
                 </Modal.Footer>
             </Modal>
             <Widget
-                handleNewUserMessage={(newMessage) => { addResponseMessage(newMessage); }}
-                title={friendName}
+                handleNewUserMessage={(newMessage) => { handleNewUserMessage(newMessage) }}
+                title={currentRoom.friendName || currentRoom.peerEmail}
                 subtitle=''
                 handleQuickButtonClicked={(value) => setShow(true)}
             />
         </div>
     );
 
-    function setChatTarget(name) {
-        setFriendName(name);
-        setShow(false);
+    function chooseChatTarget(room) {
+        firebase.database().ref().on('value', snap => {
+            dropMessages();
+            snap.forEach(childNode => {
+                if (room.messageId === childNode.key) {
+                    firebase.database().ref().child(childNode.key).child('message')
+                        .on('value', snap1 => {
+                            snap1.forEach(childNode1 => {
+                                const message = {
+                                    text: childNode1.val().text,
+                                    time: childNode1.val().time,
+                                    sender: childNode1.val().sender
+                                };
+                                if (message.sender === myEmail) {
+                                    addUserMessage(message.text);
+                                }
+                                else {
+                                    addResponseMessage(message.text);
+                                }
+                            });
+                        });
+                }
+            });
+        });
+        setcurrentRoom(room);
     }
 
-    function handleFindFriend(wildcat, src) {
+    function handleNewUserMessage(message) {
+        firebase.database().ref(currentRoom.messageId).child('message').push()
+            .set({
+                sender: myEmail,
+                text: message,
+                time: Date.now()
+            });
+    }
+
+    function handleFindFriend(src, wildcat) {
 
         let html = [];
+        wildcat = wildcat || '';
         src = src || listFriends;
 
-        src.forEach(x => {
-            if (wildcat === '' || x.indexOf(wildcat) !== -1) {
-                html = html.concat(<ListGroup.Item action variant='success' onClick={() => setChatTarget(x)}>{x}</ListGroup.Item>)
+        src.forEach(room => {
+            let friend = room.friendName || room.peerEmail;
+            if (wildcat === '' || friend.indexOf(wildcat) !== -1) {
+                html = html.concat(<ListGroup.Item action variant='success' onClick={() => chooseChatTarget(room)}>{friend}</ListGroup.Item>)
             }
         })
 

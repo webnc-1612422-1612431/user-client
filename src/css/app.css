@@ -171,7 +171,7 @@ hr {
 }
 
 .list-friends {
-    max-height: 210px;
+    max-height: 512px;
     overflow: hidden;
     overflow-y: scroll;
 }
