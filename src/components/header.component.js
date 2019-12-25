@@ -95,17 +95,26 @@ export default function Header() {
                         setInfo(res.data);
                         if (res.data.avatar) {
                             setAvatarStyle(getStyleAvatar(res.data.avatar));
+                            localStorage.setItem('email', res.data.email);
+                            localStorage.setItem('name', res.data.fullname);
                         }
+                    } else {
+                        localStorage.removeItem('email');
+                        localStorage.removeItem('name');
                     }
                 })
                 .catch(err => {
                     if (err.response) {
                         setLogged(false);
                     }
+                    localStorage.removeItem('email');
+                    localStorage.removeItem('name');
                 })
         }
         else {
             console.log('There is no token in local storage');
+            localStorage.removeItem('email');
+            localStorage.removeItem('name');
         }
     }, []);
 

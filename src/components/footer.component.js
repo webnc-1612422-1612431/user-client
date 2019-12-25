@@ -1,36 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, ListGroup } from 'react-bootstrap';
-import { Widget, addUserMessage, addResponseMessage, setQuickButtons, dropMessages } from 'react-chat-widget';
+import { Widget, addUserMessage, addResponseMessage, setQuickButtons, dropMessages, toggleWidget } from 'react-chat-widget';
 
 // firebase section
 import firebase from '../firebase';
-var myEmail = localStorage.getItem('email') || 'tbngoc.khtn@gmail.com';
+const myEmail = localStorage.getItem('email');
+var friendFromFirebase = [];
+var currentRoom = {};
 
 export default function Footer() {
 
     // for dialog modal
     const [show, setShow] = useState(false);
-    const [listFriends, setListFriends] = useState([]);
     const [listFriendsHTML, setListFriendsHTML] = useState([]);
-    const [currentRoom, setcurrentRoom] = useState('');
+    const [chatWith, setChatWith] = useState('Tin nhắn');
+    const [badge, setBadge] = useState(0);
 
-    // for chat box
+    // update badge
     setQuickButtons([{
-        "label": "Danh sách bạn bè",
+        "label": "Tin nhắn từ bạn bè (" + badge + ")",
         "value": "chat-history"
+    }, {
+        "label": "Ẩn tin nhắn",
+        "value": "chat-hide"
     }]);
 
     useEffect(() => {
 
         // get info from firebase
-        firebase.database().ref().on('value', snap => {
-            let friendFromFirebase = [];
+        firebase.database().ref().once('value', snap => {
             snap.forEach(childNode => {
                 if (childNode.val() && childNode.val().metadata && childNode.val().metadata.u1 === myEmail) {
                     const box = {
                         peerEmail: childNode.val().metadata.u2,
                         messageId: childNode.key,
-                        friendName: childNode.val().metadata.friendName
+                        friendName: childNode.val().metadata.u2Name
                     };
                     friendFromFirebase.push(box);
                 }
@@ -38,15 +42,37 @@ export default function Footer() {
                     const box = {
                         peerEmail: childNode.val().metadata.u1,
                         messageId: childNode.key,
-                        friendName: childNode.val().metadata.friendName
+                        friendName: childNode.val().metadata.u1Name
                     };
                     friendFromFirebase.push(box);
                 }
             });
-            setListFriends(friendFromFirebase);
-            handleFindFriend(friendFromFirebase);
-        });
 
+            // detect new message
+            firebase.database().ref().on('value', snap => {
+                const listMessageId = friendFromFirebase.map(x => x.messageId);
+                let badges = 0;
+                snap.forEach(childNode => {
+                    if (listMessageId.includes(childNode.key)) {
+                        let friend = friendFromFirebase[listMessageId.indexOf(childNode.key)];
+                        let count = 0;
+                        firebase.database().ref().child(childNode.key).child('message')
+                            .on('value', snap1 => {
+                                snap1.forEach(childNode1 => {
+                                    count++;
+                                });
+                            });
+                        if (count > 0) {
+                            let start = parseInt(localStorage.getItem(friend.messageId)) || 0;
+                            friend.unread = count - start;
+                            badges += friend.unread;
+                        }
+                    }
+                });
+                handleFindFriend(friendFromFirebase);
+                setBadge(badges);
+            });
+        });
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -107,7 +133,7 @@ export default function Footer() {
                 </Modal.Header>
                 <Modal.Body>
                     <div className="list filtered-list">
-                        <input className="filter form-control" onInput={(e) => handleFindFriend(listFriends, e.target.value)} type="text" placeholder="Tìm kiếm..." />
+                        <input className="filter form-control" onInput={(e) => handleFindFriend(friendFromFirebase, e.target.value)} type="text" placeholder="Tìm kiếm..." />
                     </div>
                     <ListGroup className='list-friends'>
                         {listFriendsHTML}
@@ -119,18 +145,40 @@ export default function Footer() {
             </Modal>
             <Widget
                 handleNewUserMessage={(newMessage) => { handleNewUserMessage(newMessage) }}
-                title={currentRoom.friendName || currentRoom.peerEmail}
+                title={chatWith}
                 subtitle=''
-                handleQuickButtonClicked={(value) => setShow(true)}
+                handleQuickButtonClicked={(value) => {
+                    if (value === 'chat-history') {
+                        setShow(true);
+                    }
+                    else {
+                        currentRoom = {};
+                        dropMessages();
+                        setChatWith('Tin nhắn');
+                        toggleWidget();
+                    }
+                }}
+                badge={badge}
             />
         </div>
     );
 
     function chooseChatTarget(room) {
+
+        currentRoom = room;
+
+        // message listener
+        firebase.database().ref().off('value');
         firebase.database().ref().on('value', snap => {
-            dropMessages();
+            const listMessageId = friendFromFirebase.map(x => x.messageId);
+            let badges = badge;
             snap.forEach(childNode => {
-                if (room.messageId === childNode.key) {
+                if (listMessageId.includes(childNode.key)) {
+                    if (currentRoom.messageId === childNode.key) {
+                        dropMessages();
+                    }
+                    let friend = friendFromFirebase[listMessageId.indexOf(childNode.key)];
+                    let count = 0;
                     firebase.database().ref().child(childNode.key).child('message')
                         .on('value', snap1 => {
                             snap1.forEach(childNode1 => {
@@ -139,39 +187,64 @@ export default function Footer() {
                                     time: childNode1.val().time,
                                     sender: childNode1.val().sender
                                 };
-                                if (message.sender === myEmail) {
-                                    addUserMessage(message.text);
+                                if (currentRoom.messageId === childNode.key) {
+                                    if (message.sender === myEmail) {
+                                        addUserMessage(message.text);
+                                    }
+                                    else {
+                                        addResponseMessage(message.text);
+                                    }
                                 }
-                                else {
-                                    addResponseMessage(message.text);
-                                }
+                                else count++;
                             });
                         });
+
+                    if (count > 0) {
+                        let start = parseInt(localStorage.getItem(friend.messageId)) || 0;
+                        friend.unread = count - start;
+                        badges += friend.unread;
+                    }
                 }
             });
+            handleFindFriend(friendFromFirebase);
+            setBadge(badges);
         });
-        setcurrentRoom(room);
+
+        const isRead = currentRoom.unread + parseInt(localStorage.getItem(currentRoom.messageId)) || 0;
+        localStorage.setItem(currentRoom.messageId, parseInt(isRead) || 0);
+        currentRoom.unread = 0;
+        handleFindFriend(friendFromFirebase);
+        setChatWith(currentRoom.friendName);
     }
 
     function handleNewUserMessage(message) {
-        firebase.database().ref(currentRoom.messageId).child('message').push()
-            .set({
-                sender: myEmail,
-                text: message,
-                time: Date.now()
-            });
+
+        if (currentRoom.messageId == null) {
+            addResponseMessage('Bạn đang nhắn tin với Bot');
+        }
+        else {
+            firebase.database().ref(currentRoom.messageId).child('message').push()
+                .set({
+                    sender: myEmail,
+                    text: message
+                });
+
+            // update message count
+            var current = parseInt(localStorage.getItem(currentRoom.messageId)) || 0;
+            localStorage.setItem(currentRoom.messageId, current + 1);
+        }
     }
 
     function handleFindFriend(src, wildcat) {
 
         let html = [];
         wildcat = wildcat || '';
-        src = src || listFriends;
 
         src.forEach(room => {
             let friend = room.friendName || room.peerEmail;
             if (wildcat === '' || friend.indexOf(wildcat) !== -1) {
-                html = html.concat(<ListGroup.Item action variant='success' onClick={() => chooseChatTarget(room)}>{friend}</ListGroup.Item>)
+                var padding = room.unread ? (' (' + room.unread + ')') : '';
+                html = html.concat(<ListGroup.Item action variant='success' onClick={() => chooseChatTarget(room)}>{friend}{padding}</ListGroup.Item>)
             }
         })
 

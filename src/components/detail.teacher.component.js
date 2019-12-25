@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Button, Container, Row, Col, Card } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card, Modal } from 'react-bootstrap';
 import { WithContext as ReactTags } from 'react-tag-input';
 import ShowMoreText from 'react-show-more-text';
 import StarRatings from 'react-star-ratings';
 import config from '../config';
 import '../css/tags.css';
 
+import firebase from '../firebase';
+
 const axios = require('axios');
+const myEmail = localStorage.getItem('email');
+const myName = localStorage.getItem('name');
 
 export default function DetailTeacher() {
 
@@ -14,6 +18,9 @@ export default function DetailTeacher() {
     const [introduction, setIntroduction] = useState('');
     const [tags, setTags] = useState([]);
     const [avatarStyle, setAvatarStyle] = useState(getStyleAvatar('https://www.songthuanchay.vn/wp-content/uploads/2019/04/a-avatar-0.jpg'));
+
+    const [show, setShow] = useState(false);
+    const [modalContent, setModalContent] = useState('');
 
     useEffect(() => {
         const address = window.location.href;
@@ -40,7 +47,6 @@ export default function DetailTeacher() {
         }
     }, []);
 
-
     return (
         <div>
             <Card className="card-center">
@@ -55,7 +61,7 @@ export default function DetailTeacher() {
                                 Tuổi: <b>{info.age}</b><br></br>
                                 Bằng cấp: <b>{info.degree}</b><br></br>
                                 Địa chỉ: <b>{info.address}</b><br></br><br></br>
-                                <Button size="sm">Liên hệ</Button>
+                                <Button size="sm" onClick={() => handleAddFriend()}>Kết bạn</Button>
                             </Col>
                             <Col>
                                 <center>
@@ -149,6 +155,15 @@ export default function DetailTeacher() {
                     </Container>
                 </Card.Body>
             </Card>
+            <Modal show={show} style={{ opacity: 1 }}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Thông báo</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{modalContent}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant='primary' onClick={() => setShow(false)}>Thoát</Button>
+                </Modal.Footer>
+            </Modal>
         </div >
     );
 
@@ -156,5 +171,50 @@ export default function DetailTeacher() {
         return {
             "background-image": "url('" + url + "')"
         }
+    }
+
+    function handleAddFriend() {
+
+        if (myEmail === null || myName === null) {
+            setModalContent('Xin vui lòng đăng nhập để tiếp tục');
+            setShow(true);
+            return;
+        }
+
+        firebase.database().ref().on('value', snap => {
+
+            var isExisted = false;
+            snap.forEach(childNode => {
+                if ((childNode.val().metadata.u1 === myEmail && childNode.val().metadata.u2 === info.email) ||
+                    (childNode.val().metadata.u1 === info.email && childNode.val().metadata.u2 === myEmail)) {
+                    isExisted = true;
+                    return;
+                }
+            });
+
+            if (isExisted) {
+                setModalContent('Hai bạn đã kết bạn với nhau');
+                setShow(true);
+            }
+            else {
+                firebase.database().ref().push()
+                    .set({
+                        metadata: {
+                            u1: myEmail,
+                            u2: info.email,
+                            u1Name: myName,
+                            u2Name: info.fullname
+                        }
+                    })
+                    .then(id => {
+                        setModalContent('Thêm bạn thành công');
+                        setShow(true);
+                    })
+                    .catch(err => {
+                        setModalContent('Lỗi: ' + JSON.stringify(err));
+                        setShow(true);
+                    })
+            }
+        });
     }
 }
