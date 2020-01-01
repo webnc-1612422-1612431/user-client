@@ -17,7 +17,8 @@ export default function DetailTeacher() {
     const [info, setInfo] = useState({});
     const [introduction, setIntroduction] = useState('');
     const [tags, setTags] = useState([]);
-    const [avatarStyle, setAvatarStyle] = useState(getStyleAvatar('https://www.songthuanchay.vn/wp-content/uploads/2019/04/a-avatar-0.jpg'));
+    const [avatarStyle, setAvatarStyle] = useState(getStyleAvatar());
+    const [commentHTML, setCommentHTML] = useState('');
 
     const [show, setShow] = useState(false);
     const [modalContent, setModalContent] = useState('');
@@ -39,12 +40,33 @@ export default function DetailTeacher() {
                         if (res.data.avatar) {
                             setAvatarStyle(getStyleAvatar(res.data.avatar));
                         }
+
+                        // if logged, then load comment
+                        const token = localStorage.getItem('token');
+                        if (token != null) {
+                            axios.post(config['server-domain'] + 'profile/get-comments', {
+                                teacherid: res.data.teacherid
+                            }, {
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            })
+                                .then(ress => {
+                                    if (ress.data && ress.data.comments) {
+                                        setupComments(ress.data.comments);
+                                    }
+                                })
+                                .catch(errr => { });
+                        }
+
                     }
                 })
                 .catch(err => {
                     window.location.href = '/';
                 })
         }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -66,14 +88,14 @@ export default function DetailTeacher() {
                             <Col>
                                 <center>
                                     <br></br>
-                                    <b>Đánh giá tổng quan</b><br></br>
+                                    <b>ĐÁNH GIÁ TỔNG QUAN</b><br></br>
                                     <StarRatings
-                                        rating={4.5}
-                                        starDimension="24px"
-                                        starSpacing="1px"
+                                        rating={info.rate}
+                                        starDimension="27px"
+                                        starSpacing="2px"
                                         starRatedColor="green"
                                     /><br></br>
-                                    <b>4.5/5 (Fake)</b><br></br>
+                                    <h4>{info.rate}/5</h4><br></br>
                                 </center>
                             </Col>
                         </Row>
@@ -127,34 +149,7 @@ export default function DetailTeacher() {
                     </Container>
                 </Card.Body>
             </Card>
-            <Card className="card-center">
-                <Card.Header className="card-header">Đánh giá từ người học (Fake)</Card.Header>
-                <Card.Body>
-                    <Container>
-                        <Row>
-                            <Col xs={1}>
-                                <div className="ratio img-responsive img-circle" style={avatarStyle}></div>
-                            </Col>
-                            <Col>
-                                <b>Trịnh Quang Nghĩa</b>
-                                <br></br>
-                                <i>Thầy giáo rất vui tính và nhiệt tình</i>
-                            </Col>
-                        </Row>
-                        <hr></hr>
-                        <Row>
-                            <Col xs={1}>
-                                <div className="ratio img-responsive img-circle" style={avatarStyle}></div>
-                            </Col>
-                            <Col>
-                                <b>Trần Bá Ngọc</b>
-                                <br></br>
-                                <i>Thầy hơi nghiêm túc nhưng dạy rất hay</i>
-                            </Col>
-                        </Row>
-                    </Container>
-                </Card.Body>
-            </Card>
+            {commentHTML}
             <Modal show={show} style={{ opacity: 1 }}>
                 <Modal.Header closeButton>
                     <Modal.Title>Thông báo</Modal.Title>
@@ -168,6 +163,9 @@ export default function DetailTeacher() {
     );
 
     function getStyleAvatar(url) {
+        if (url == null) {
+            url = 'https://forum.waka.vn/assets/avatars/default.svg';
+        }
         return {
             "background-image": "url('" + url + "')"
         }
@@ -216,5 +214,42 @@ export default function DetailTeacher() {
                     })
             }
         });
+    }
+
+    function setupComments(comments) {
+
+        const commentRows = [];
+
+        for (var i = 0; i < comments.length; i++) {
+            commentRows.push(<Row>
+                <Col xs={1}>
+                    <div className="ratio img-responsive img-circle" style={getStyleAvatar(comments[i].avatar)}></div>
+                </Col>
+                <Col>
+                    <b>{comments[i].fullname}</b>
+                    <br></br>
+                    <i>{comments[i].content}</i>
+                </Col>
+            </Row>);
+
+            if (i !== comments.length - 1) {
+                commentRows.push(<hr></hr>)
+            }
+        }
+
+        if (comments.length === 0) {
+            commentRows.push(<Row>Chưa có nhận xét nào cho người dạy</Row>);
+        }
+
+        const html = <Card className="card-center">
+            <Card.Header className="card-header">Đánh giá từ người học</Card.Header>
+            <Card.Body>
+                <Container>
+                    {commentRows}
+                </Container>
+            </Card.Body>
+        </Card>
+
+        setCommentHTML(html);
     }
 }
