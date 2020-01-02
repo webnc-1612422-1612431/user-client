@@ -105,7 +105,7 @@ export default function ListTeacher(props) {
                                         rating={info.rate || 0}
                                         starDimension='13px'
                                         starSpacing='0px'
-                                        starRatedColor='green'
+                                        starRatedColor={(info.rate && info.rate < 3) ? 'red' : 'green'}
                                     /><br></br>ĐGiá: {info.rate || 0}/5
                                 </Col>
                             </Row>

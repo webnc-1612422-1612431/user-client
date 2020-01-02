@@ -19,6 +19,7 @@ export default function DetailTeacher() {
     const [tags, setTags] = useState([]);
     const [avatarStyle, setAvatarStyle] = useState(getStyleAvatar());
     const [commentHTML, setCommentHTML] = useState('');
+    const [contractHTML, setContractHTML] = useState('');
 
     const [show, setShow] = useState(false);
     const [modalContent, setModalContent] = useState('');
@@ -44,7 +45,7 @@ export default function DetailTeacher() {
                         // if logged, then load comment
                         const token = localStorage.getItem('token');
                         if (token != null) {
-                            axios.post(config['server-domain'] + 'profile/get-comments', {
+                            axios.post(config['server-domain'] + 'profile/get-contracts-comments', {
                                 teacherid: res.data.teacherid
                             }, {
                                 headers: {
@@ -54,6 +55,9 @@ export default function DetailTeacher() {
                                 .then(ress => {
                                     if (ress.data && ress.data.comments) {
                                         setupComments(ress.data.comments);
+                                    }
+                                    if (ress.data && ress.data.contracts) {
+                                        setupContracts(ress.data.contracts);
                                     }
                                 })
                                 .catch(errr => { });
@@ -90,14 +94,14 @@ export default function DetailTeacher() {
                                     <br></br>
                                     <b>ĐÁNH GIÁ TỔNG QUAN</b><br></br>
                                     <StarRatings
-                                        rating={info.rate}
+                                        rating={info.rate || 0}
                                         starDimension="27px"
                                         starSpacing="2px"
-                                        starRatedColor="green"
+                                        starRatedColor={(info.rate && info.rate < 3) ? 'red' : 'green'}
                                     /><br></br>
-                                    <h4>{info.rate}/5</h4>
+                                    <h4>{info.rate || 0}/5</h4>
                                     <b>TỶ LỆ THÀNH CÔNG</b><br></br>
-                                    <b>{info.successRate}%</b>
+                                    <b>{info.successRate || 0}%</b>
                                 </center>
                             </Col>
                         </Row>
@@ -151,6 +155,7 @@ export default function DetailTeacher() {
                     </Container>
                 </Card.Body>
             </Card>
+            {contractHTML}
             {commentHTML}
             <Modal show={show} style={{ opacity: 1 }}>
                 <Modal.Header closeButton>
@@ -245,7 +250,7 @@ export default function DetailTeacher() {
 
         const html = <Card className="card-center">
             <Card.Header className="card-header">Đánh giá từ người học</Card.Header>
-            <Card.Body>
+            <Card.Body style={{ 'max-height': '250px', overflow: 'hidden', 'overflowY': 'scroll' }}>
                 <Container>
                     {commentRows}
                 </Container>
@@ -253,5 +258,46 @@ export default function DetailTeacher() {
         </Card>
 
         setCommentHTML(html);
+    }
+
+    function setupContracts(contracts) {
+        const contractRows = [];
+
+        for (var i = 0; i < contracts.length; i++) {
+            contractRows.push(<Row>
+                <Col xs={2}>
+                    <StarRatings
+                        rating={contracts[i].rate}
+                        starDimension='18px'
+                        starSpacing='0px'
+                        starRatedColor={contracts[i].rate < 3 ? 'red' : 'green'}
+                    /><br></br>Đánh giá: {contracts[i].rate}/5
+                </Col>
+                <Col style={{'margin-left': '-50px'}}>
+                    <b>{contracts[i].description}</b>
+                    <br></br>
+                    Môn học: <i>{contracts[i].skill}</i> ({contracts[i].start} - {contracts[i].end})
+                </Col>
+            </Row>);
+
+            if (i !== contracts.length - 1) {
+                contractRows.push(<hr></hr>)
+            }
+        }
+
+        if (contracts.length === 0) {
+            contractRows.push(<Row>Chưa có lớp học nào</Row>);
+        }
+
+        const html = <Card className="card-center">
+            <Card.Header className="card-header">Lịch sử dạy học</Card.Header>
+            <Card.Body style={{ 'max-height': '250px', overflow: 'hidden', 'overflowY': 'scroll' }}>
+                <Container>
+                    {contractRows}
+                </Container>
+            </Card.Body>
+        </Card>
+
+        setContractHTML(html);
     }
 }
