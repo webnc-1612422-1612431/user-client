@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { Button, Pagination, Card, Col, Row, Container } from 'react-bootstrap';
 import StarRatings from 'react-star-ratings';
 import config from '../config';
@@ -8,10 +8,12 @@ const axios = require('axios');
 const profilePerPage = 3;
 var teachersArray;
 
-export default function ListTeacher() {
+export default function ListTeacher(props) {
 
+    const { special } = props;
     const [listTeacherHTML, setListTeacherHTML] = useState('');
     const [paginationHTML, setPaginationHTML] = useState('');
+    const [listType, setListType] = useState(special);
 
     if (window.location.href.indexOf('?major=') !== -1) {
         var major = window.location.href.substr(window.location.href.indexOf('?major=') + '?major='.length);
@@ -23,11 +25,12 @@ export default function ListTeacher() {
     useEffect(() => {
         axios.get(config['server-domain'] + 'public/all-teacher', {
             params: {
-                major: major
+                major: major,
+                special: listType
             }
         })
             .then((res) => {
-                if (res.status === 200) {
+                if (res.data && res.data.teachers) {
                     teachersArray = res.data.teachers;
                     setupListTeacher(teachersArray, 1);
                     setupPagination(teachersArray, 1);
@@ -36,19 +39,23 @@ export default function ListTeacher() {
             .catch(err => {
                 window.location.href = '/';
             })
-            
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [major]);
+    }, [major, listType]);
 
     return (
-        <Card className="card-list">
+        <Card className='card-list'>
             <Card.Header>
                 Danh sách giáo viên <b>{localizeMajor(major)}</b>
-                <div className="sort-list">
-                    <i>...</i>
-                </div>
+                {special === undefined ? '' : <div className='sort-list'>
+                    <select className='form-control-sm' onChange={(e) => setListType(e.target.value)}>
+                        <option value='all'>Tất cả</option>
+                        <option value='top-rate' selected>Được đánh giá cao nhất</option>
+                        <option value='top-number-contract'>Tỷ lệ thành công cao nhất</option>
+                    </select>
+                </div>}
             </Card.Header>
-            <Container className="container-list">
+            <Container className='container-list'>
                 {listTeacherHTML}
             </Container>
             <Card.Footer>
@@ -72,34 +79,34 @@ export default function ListTeacher() {
             }
 
             const avatarHTML = {
-                "background-image": "url('" + info.avatar + "')",
-                "padding": "75%",
-                "margin-left": "-10px"
+                'background-image': 'url(\'' + info.avatar + '\')',
+                'padding': '75%',
+                'margin-left': '-10px'
             }
             return <Col>
-                <Card className="card-small">
-                    <Card.Header className="card-header-small">{info.fullname}</Card.Header>
+                <Card className='card-small'>
+                    <Card.Header className='card-header-small'>{info.fullname}</Card.Header>
                     <Card.Body>
                         <Container>
                             <Row>
-                                <Col xs={1}><div className="ratio img-responsive img-circle" style={avatarHTML}></div></Col>
+                                <Col xs={1}><div className='ratio img-responsive img-circle' style={avatarHTML}></div></Col>
                                 <Col>
                                     <b>{localizeDegree(info.degree)}</b><br></br>
                                     Chuyên môn: <b>{localizeMajor(info.major)}</b>
                                     <br></br>
                                     Giá trên giờ: <b>{abbreviateNumber(info.price)}</b>
                                     <br></br><br></br>
-                                    <Button size="sm" href={'detail-teacher?email=' + info.email}>CHI TIẾT</Button>
+                                    <Button size='sm' href={'detail-teacher?email=' + info.email}>CHI TIẾT</Button>
                                 </Col>
                             </Row>
                             <Row>
-                                <Col style={{ "margin-top": "-20px" }}>
+                                <Col style={{ 'margin-top': '-20px' }}>
                                     <StarRatings
-                                        rating={4.5}
-                                        starDimension="13px"
-                                        starSpacing="0px"
-                                        starRatedColor="green"
-                                    /><br></br>ĐGiá: 4.5/5
+                                        rating={info.rate || 0}
+                                        starDimension='13px'
+                                        starSpacing='0px'
+                                        starRatedColor='green'
+                                    /><br></br>ĐGiá: {info.rate || 0}/5
                                 </Col>
                             </Row>
                         </Container>
@@ -133,7 +140,7 @@ export default function ListTeacher() {
 }
 
 function abbreviateNumber(number) {
-    var SI_SYMBOL = ["", "K", "M", "G", "T", "P", "E"];
+    var SI_SYMBOL = ['', 'K', 'M', 'G', 'T', 'P', 'E'];
     var tier = Math.log10(number) / 3 | 0;
     if (tier === 0) return number;
     var suffix = SI_SYMBOL[tier];

@@ -150,7 +150,8 @@ hr {
 
 .sort-list {
     float: right;
-    font-size: 18px;
+    font-size: 15px;
+    padding-bottom: 0px;
 }
 
 .card {

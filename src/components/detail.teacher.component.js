@@ -95,7 +95,9 @@ export default function DetailTeacher() {
                                         starSpacing="2px"
                                         starRatedColor="green"
                                     /><br></br>
-                                    <h4>{info.rate}/5</h4><br></br>
+                                    <h4>{info.rate}/5</h4>
+                                    <b>TỶ LỆ THÀNH CÔNG</b><br></br>
+                                    <b>{info.successRate}%</b>
                                 </center>
                             </Col>
                         </Row>
