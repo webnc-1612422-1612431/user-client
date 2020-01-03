@@ -278,6 +278,9 @@ export default function DetailTeacher() {
                     <br></br>
                     Môn học: <i>{contracts[i].skill}</i> ({contracts[i].start} - {contracts[i].end})
                 </Col>
+                <Col>
+                    Trạng thái: <b>{contracts[i].state === 0 ? 'Đang dạy' : contracts[i].state === 1 ? 'Đã hủy' : 'Đã hoàn thành'}</b>
+                </Col>
             </Row>);
 
             if (i !== contracts.length - 1) {
