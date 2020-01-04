@@ -12,7 +12,7 @@ var isTeacherView;
 var requestsArray;
 var flagArray;
 
-export default function ListRequest(pops) {
+export default function ListRequest() {
 
     const [requestHTML, setRequestHTML] = useState('');
     const [show, setShow] = useState(false);
@@ -68,8 +68,8 @@ export default function ListRequest(pops) {
                     <select className='form-control-sm' onChange={(e) => setState(e.target.value)}>
                         <option selected value='all'>Tất cả</option>
                         <option value='0'>Đang chờ duyệt</option>
-                        <option value='1'>Đã chấp nhận</option>
-                        <option value='2'>Đã từ chối</option>
+                        <option value='1'>Đã từ chối</option>
+                        <option value='2'>Đã chấp nhận</option>
                     </select>
                     &ensp;
                     &ensp;
@@ -109,6 +109,7 @@ export default function ListRequest(pops) {
             const targetEmail = requests[i].email;
             const targetName = requests[i].fullname;
             const requestId = requests[i].id;
+            const revenue = calculateTotalPrice(requests[i].price, requests[i].start, requests[i].end, requests[i].dayperweek, requests[i].hourperday);
             requestRows.push(<Row>
                 <Col xs={2}>
                     <div className="ratio img-responsive img-circle" style={getStyleAvatar(requests[i].avatar)}></div>
@@ -122,9 +123,9 @@ export default function ListRequest(pops) {
                     <br></br>
                     <b>Lịch học:</b> {requests[i].dayperweek} ngày/tuần {'&'} {requests[i].hourperday} giờ/ngày
                     <br></br>
-                    <b>Giá toàn khóa:</b> {calculateTotalPrice(requests[i].price, requests[i].start, requests[i].end, requests[i].dayperweek, requests[i].hourperday)}
+                    <b>Giá toàn khóa:</b> {revenue}
                     <br></br>
-                    <b>Trạng thái:</b> {requests[i].isaccept === 0 ? 'Đang chờ duyệt' : requests[i].isaccept === 1 ? 'Đã chấp nhận' : 'Đã từ chối'}
+                    <b>Trạng thái:</b> {requests[i].isaccept === 0 ? 'Đang chờ duyệt' : requests[i].isaccept === 1 ? 'Đã từ chối' : 'Đã chấp nhận'}
                 </Col>
                 <Col>
                     <br></br><br></br><br></br>
@@ -132,12 +133,12 @@ export default function ListRequest(pops) {
                         isTeacherView ?
                             <div>
                                 <Button size="sm" onClick={() => handleAddFriend(targetEmail, targetName)}>Kết bạn</Button>
-                                <Button size="sm" variant='secondary' onClick={() => handleRequest(requestId, 1)} hidden={requests[i].isaccept > 0}>Chấp nhận</Button>
-                                <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, 2)} hidden={requests[i].isaccept > 0}>Từ chối</Button>
+                                <Button size="sm" variant='secondary' onClick={() => handleRequest(requestId, 2, revenue)} hidden={requests[i].isaccept > 0}>Chấp nhận</Button>
+                                <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, 1, revenue)} hidden={requests[i].isaccept > 0}>Từ chối</Button>
                             </div> :
                             <div>
                                 <Button size="sm" onClick={() => { window.location.href = '/detail-teacher?email=' + targetEmail}}>Thông tin</Button>
-                                <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, -1)} hidden={requests[i].isaccept > 0}>Hủy yêu cầu</Button>
+                                <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, -1, revenue)} hidden={requests[i].isaccept > 0}>Hủy yêu cầu</Button>
                             </div>
                     }
                 </Col>
@@ -164,12 +165,13 @@ export default function ListRequest(pops) {
         setRequestHTML(html);
     }
 
-    function handleRequest(requestId, isAccept) {
+    function handleRequest(requestId, isAccept, revenue) {
         const token = localStorage.getItem('token');
         if (token != null) {
             axios.post(config['server-domain'] + 'profile/update-request', {
                 requestid: requestId,
-                isaccept: isAccept
+                isaccept: isAccept,
+                revenue: parseInt(revenue.replace(/,/g, ''))
             }, {
                 headers: {
                     'Authorization': `Bearer ${token}`

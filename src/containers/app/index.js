@@ -19,6 +19,8 @@ import ListTeacher from '../../components/list.teacher.component';
 import ChangePass from '../../components/changepass.component';
 import InfoStudent from '../../components/info.student.component';
 import ListRequest from '../../components/list.request.component';
+import ListContract from '../../components/list.contract.component';
+import DetailContract from '../../components/detail.contract.component';
 
 const App = () => (
     <div>
@@ -36,6 +38,8 @@ const App = () => (
             <Route exact path="/list-teacher" component={ListTeacher} />
             <Route exact path="/change-pass" component={ChangePass} />
             <Route exact path="/list-request" component={ListRequest} />
+            <Route exact path="/list-contract" component={ListContract} />
+            <Route exact path="/detail-contract" component={DetailContract} />
         </main>
     </div>
 );
