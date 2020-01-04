@@ -6,6 +6,7 @@ import '../css/tags.css';
 
 const axios = require('axios');
 const token = localStorage.getItem('token');
+var complainNotHandledExisted;
 
 export default function DetailContract() {
 
@@ -14,7 +15,7 @@ export default function DetailContract() {
     const [rate, setRate] = useState(0);
     const [state, setState] = useState(0);
     const [comment, setComment] = useState('');
-    const [commentType, setCommentType] = useState('');
+    const [commentType, setCommentType] = useState('all');
     const [teacherView, setTeacherView] = useState('');
     const [avatarStyle, setAvatarStyle] = useState(getStyleAvatar());
     const [avatarStyle2, setAvatarStyle2] = useState(getStyleAvatar());
@@ -22,6 +23,8 @@ export default function DetailContract() {
 
     const [show, setShow] = useState(false);
     const [modalContent, setModalContent] = useState('');
+    const [show2, setShow2] = useState(false);
+    const [complain, setComplain] = useState('');
 
     useEffect(() => {
         if (!token) window.location.href = '/';
@@ -45,6 +48,7 @@ export default function DetailContract() {
                         setRate(res.data.info.rate);
                         setState(res.data.info.state);
                         setTeacherView(res.data.isteacherview);
+                        complainNotHandledExisted = res.data.complainNotHandledExisted;
 
                         // get comments
                         axios.post(config['server-domain'] + 'profile/get-comments', {
@@ -142,6 +146,17 @@ export default function DetailContract() {
                                 <br></br><Button size="sm" onClick={() => updateContract()}>Lưu lại</Button>
                                 <Button size="sm" variant='danger' onClick={() => updateContract(true)} disabled={state === 2}>Thanh toán</Button>
                             </Col>
+                            <Col>
+                                <br></br><Button size="sm" variant='danger' onClick={() => {
+                                    if (complainNotHandledExisted) {
+                                        setShow2(false);
+                                        setModalContent('Bạn đã khiếu nại cho hợp đồng này và đang được xử lý, xin vui lòng đợi');
+                                        setShow(true);
+                                    } else {
+                                        setShow2(true);
+                                    }
+                                }}>Khiếu nại người dạy</Button>
+                            </Col>
                         </Row>
                     </Container>
                 </Card.Body>
@@ -179,12 +194,46 @@ export default function DetailContract() {
                     <Button variant='primary' onClick={() => setShow(false)}>Thoát</Button>
                 </Modal.Footer>
             </Modal>
-
+            <Modal show={show2} style={{ opacity: 1 }}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Khiếu nại hợp đồng</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <label>Lý do khiếu nại:</label>
+                    <textarea className='form-control' value={complain} onChange={(e) => setComplain(e.target.value)}></textarea><br></br>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={() => sendComplain()} variant='danger'>Xác nhận</Button>
+                    <Button variant='primary' onClick={() => setShow2(false)}>Thoát</Button>
+                </Modal.Footer>
+            </Modal>
         </div >
     );
 
-    function sendComment() {
+    function sendComplain() {
+        axios.post(config['server-domain'] + 'profile/add-complain', {
+            contractid: info.id,
+            content: complain
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                if (res.status === 200) {
+                    setShow2(false);
+                    setModalContent(res.data.message);
+                    setShow(true);
+                }
+            })
+            .catch(err => {
+                setShow2(false);
+                setModalContent(err.response.data.message);
+                setShow(true);
+            });
+    }
 
+    function sendComment() {
         axios.post(config['server-domain'] + 'profile/add-comment', {
             teacherid: info.teacherid,
             studentid: info.studentid,
