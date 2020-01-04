@@ -196,14 +196,14 @@ export default function Header() {
                                 </li>
                                 {menu}
                             </ul>
-                            <div class='navbar-cta'><a class='btn btn-primary' href={!logged ? '/login' : info.role === 'teacher' ? '/list-contract' : '/find-constract'}>
-                                {!logged ? 'ĐĂNG NHẬP' : info.role === 'teacher' ? 'DUYỆT YÊU CẦU' : 'TÌM GIẢNG VIÊN'} <up-track tracking-event='click'
+                            <div class='navbar-cta'><a class='btn btn-primary' href={!logged ? '/login' : info.role === 'teacher' ? '/list-request' : '/list-contract'}>
+                                {!logged ? 'ĐĂNG NHẬP' : info.role === 'teacher' ? 'DUYỆT YÊU CẦU' : 'XEM HỢP ĐỒNG'} <up-track tracking-event='click'
                                     tracking-location-default='vs' tracking-sublocation='primary_nav_bar'
                                     tracking-label='post_a_job_button' class='hydrated'></up-track></a>
                             </div>
                             <DropdownButton title={(logged ? info.fullname : 'ĐĂNG KÝ') + ' '} size="sm" className="dropbutton">
                                 <Dropdown.Item href={logged ? (info.role === 'teacher' ? '/info-teacher' : 'info-student') : '/sign-up-teacher'}>{logged ? 'Cập nhật thông tin' : 'Đăng ký dạy học'}</Dropdown.Item>
-                                <Dropdown.Item href={logged ? (info.role === 'teacher' ? '/manage-tags' : 'manage-contracts') : '/sign-up-student'}>{logged ? (info.role === 'teacher' ? 'Quản lý kỹ năng' : 'Danh sách hợp đồng') : 'Đăng ký học'}</Dropdown.Item>
+                                <Dropdown.Item href={logged ? (info.role === 'teacher' ? '/manage-tags' : 'list-request') : '/sign-up-student'}>{logged ? (info.role === 'teacher' ? 'Quản lý kỹ năng' : 'Quản lý yêu cầu') : 'Đăng ký học'}</Dropdown.Item>
                                 <Dropdown.Item href='change-pass'>Đổi mật khẩu</Dropdown.Item>
                                 <Dropdown.Divider />
                                 <Dropdown.Item href={logged ? '/logout' : '/forgot-pass'}>{logged ? 'Đăng xuất' : 'Quên mật khẩu'}</Dropdown.Item>

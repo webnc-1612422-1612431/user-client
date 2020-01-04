@@ -8,11 +8,11 @@ import firebase from '../firebase';
 const axios = require('axios');
 const myEmail = localStorage.getItem('email');
 const myName = localStorage.getItem('name');
+var isTeacherView;
 var requestsArray;
 var flagArray;
-var price;
 
-export default function ListContract(pops) {
+export default function ListRequest(pops) {
 
     const [requestHTML, setRequestHTML] = useState('');
     const [show, setShow] = useState(false);
@@ -31,8 +31,8 @@ export default function ListContract(pops) {
             })
                 .then(ress => {
                     if (ress.data && ress.data.requests) {
+                        isTeacherView = ress.data.isteacherview;
                         requestsArray = ress.data.requests;
-                        price = ress.data.price;
                         handleSubmit();
                     }
                 })
@@ -56,7 +56,7 @@ export default function ListContract(pops) {
             }
         }
 
-        setupRequests(requestsArray, price)
+        setupRequests(requestsArray);
     }
 
     return (
@@ -98,7 +98,7 @@ export default function ListContract(pops) {
         }
     }
 
-    function setupRequests(requests, price) {
+    function setupRequests(requests) {
 
         // filter
         requests = requests.filter((x, i) => flagArray[i] === 1);
@@ -114,7 +114,7 @@ export default function ListContract(pops) {
                     <div className="ratio img-responsive img-circle" style={getStyleAvatar(requests[i].avatar)}></div>
                 </Col>
                 <Col style={{ 'line-height': '20px' }}>
-                    <b>Người học:</b> {requests[i].fullname}
+                    <b>Đối tác:</b> {requests[i].fullname}
                     <br></br>
                     <b>Môn học:</b> {requests[i].skill}
                     <br></br>
@@ -122,15 +122,24 @@ export default function ListContract(pops) {
                     <br></br>
                     <b>Lịch học:</b> {requests[i].dayperweek} ngày/tuần {'&'} {requests[i].hourperday} giờ/ngày
                     <br></br>
-                    <b>Giá toàn khóa:</b> {calculateTotalPrice(price, requests[i].start, requests[i].end, requests[i].dayperweek, requests[i].hourperday)}
+                    <b>Giá toàn khóa:</b> {calculateTotalPrice(requests[i].price, requests[i].start, requests[i].end, requests[i].dayperweek, requests[i].hourperday)}
                     <br></br>
                     <b>Trạng thái:</b> {requests[i].isaccept === 0 ? 'Đang chờ duyệt' : requests[i].isaccept === 1 ? 'Đã chấp nhận' : 'Đã từ chối'}
                 </Col>
                 <Col>
                     <br></br><br></br><br></br>
-                    <Button size="sm" onClick={() => handleAddFriend(targetEmail, targetName)}>Kết bạn</Button>
-                    <Button size="sm" variant='secondary' onClick={() => handleRequest(requestId, 1)} hidden={requests[i].isaccept > 0}>Chấp nhận</Button>
-                    <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, 2)} hidden={requests[i].isaccept > 0}>Từ chối</Button>
+                    {
+                        isTeacherView ?
+                            <div>
+                                <Button size="sm" onClick={() => handleAddFriend(targetEmail, targetName)}>Kết bạn</Button>
+                                <Button size="sm" variant='secondary' onClick={() => handleRequest(requestId, 1)} hidden={requests[i].isaccept > 0}>Chấp nhận</Button>
+                                <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, 2)} hidden={requests[i].isaccept > 0}>Từ chối</Button>
+                            </div> :
+                            <div>
+                                <Button size="sm" onClick={() => handleAddFriend(targetEmail, targetName)}>Kết bạn</Button>
+                                <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, -1)} hidden={requests[i].isaccept > 0}>Hủy yêu cầu</Button>
+                            </div>
+                    }
                 </Col>
             </Row>);
 
@@ -140,7 +149,7 @@ export default function ListContract(pops) {
         }
 
         if (requests.length === 0) {
-            requestRows.push(<Row>Chưa có lớp học nào</Row>);
+            requestRows.push(<Row>Chưa có yêu cầu nào</Row>);
         }
 
         const html = <Card className="card-center">
