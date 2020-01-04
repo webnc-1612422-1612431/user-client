@@ -192,12 +192,12 @@ export default function Header() {
                             </div>
                             <ul class='navbar-nav navbar-lg navbar-subnav navbar-right' role='menubar'>
                                 <li role='none'>
-                                    <a href='list-teacher' target='_self' role='menuitem'><b><u>{!logged ? 'GUEST' : info.role === 'teacher' ? 'TEACHER' : 'STUDENT'}</u></b></a>
+                                    <a href={logged && info.role === 'teacher' ? 'detail-teacher?email=' + info.email : '/'} target='_self' role='menuitem'><b><u>{!logged ? 'GUEST' : info.role === 'teacher' ? 'TEACHER' : 'STUDENT'}</u></b></a>
                                 </li>
                                 {menu}
                             </ul>
-                            <div class='navbar-cta'><a class='btn btn-primary' href={!logged ? '/login' : info.role === 'teacher' ? '/create-constract' : '/find-constract'}>
-                                {!logged ? 'ĐĂNG NHẬP' : info.role === 'teacher' ? 'TẠO HỢP ĐỒNG' : 'TÌM GIẢNG VIÊN'} <up-track tracking-event='click'
+                            <div class='navbar-cta'><a class='btn btn-primary' href={!logged ? '/login' : info.role === 'teacher' ? '/list-contract' : '/find-constract'}>
+                                {!logged ? 'ĐĂNG NHẬP' : info.role === 'teacher' ? 'DUYỆT YÊU CẦU' : 'TÌM GIẢNG VIÊN'} <up-track tracking-event='click'
                                     tracking-location-default='vs' tracking-sublocation='primary_nav_bar'
                                     tracking-label='post_a_job_button' class='hydrated'></up-track></a>
                             </div>

@@ -128,7 +128,7 @@ export default function DetailTeacher() {
                         </Row>
                         <Row className="intro-container">
                             <Col>
-                                <b>{info.price} VND</b><br></br>
+                                <b>{info.price}</b><br></br>
                                 Giá trên giờ
                         </Col>
                             <Col>
@@ -136,7 +136,7 @@ export default function DetailTeacher() {
                                 Số hợp đồng
                         </Col>
                             <Col>
-                                <b>{info.totalRevenue} VND</b><br></br>
+                                <b>{info.totalRevenue}</b><br></br>
                                 Tổng thu nhập
                         </Col>
                         </Row>
@@ -190,6 +190,9 @@ export default function DetailTeacher() {
 
             var isExisted = false;
             snap.forEach(childNode => {
+                if (!(childNode.val() && childNode.val().metadata && childNode.val().metadata.u1)) {
+                    return;
+                }
                 if ((childNode.val().metadata.u1 === myEmail && childNode.val().metadata.u2 === info.email) ||
                     (childNode.val().metadata.u1 === info.email && childNode.val().metadata.u2 === myEmail)) {
                     isExisted = true;
@@ -294,7 +297,7 @@ export default function DetailTeacher() {
 
         const html = <Card className="card-center">
             <Card.Header className="card-header">Lịch sử dạy học</Card.Header>
-            <Card.Body style={{ 'max-height': '250px', overflow: 'hidden', 'overflowY': 'scroll' }}>
+            <Card.Body style={{ 'max-height': '215px', overflow: 'hidden', 'overflowY': 'scroll' }}>
                 <Container>
                     {contractRows}
                 </Container>
