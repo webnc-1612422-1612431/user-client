@@ -136,7 +136,7 @@ export default function ListRequest(pops) {
                                 <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, 2)} hidden={requests[i].isaccept > 0}>Từ chối</Button>
                             </div> :
                             <div>
-                                <Button size="sm" onClick={() => handleAddFriend(targetEmail, targetName)}>Kết bạn</Button>
+                                <Button size="sm" onClick={() => { window.location.href = '/detail-teacher?email=' + targetEmail}}>Thông tin</Button>
                                 <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, -1)} hidden={requests[i].isaccept > 0}>Hủy yêu cầu</Button>
                             </div>
                     }

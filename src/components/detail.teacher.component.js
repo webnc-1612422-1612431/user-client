@@ -23,6 +23,8 @@ export default function DetailTeacher() {
 
     const [show, setShow] = useState(false);
     const [modalContent, setModalContent] = useState('');
+    const [show2, setShow2] = useState(false);
+    const [modalContent2, setModalContent2] = useState({});
 
     useEffect(() => {
         const address = window.location.href;
@@ -88,6 +90,10 @@ export default function DetailTeacher() {
                                 Bằng cấp: <b>{info.degree}</b><br></br>
                                 Địa chỉ: <b>{info.address}</b><br></br><br></br>
                                 <Button size="sm" onClick={() => handleAddFriend()}>Kết bạn</Button>
+                                <Button size="sm" variant='danger' onClick={() => {
+                                    setModalContent('Hãy chọn kỹ năng / môn học tương ứng mà bạn muốn học bên dưới');
+                                    setShow(true);
+                                }}>Đăng ký học</Button>
                             </Col>
                             <Col>
                                 <center>
@@ -128,7 +134,7 @@ export default function DetailTeacher() {
                         </Row>
                         <Row className="intro-container">
                             <Col>
-                                <b>{info.price}</b><br></br>
+                                <b>{abbreviateNumber(info.price || 0)}</b><br></br>
                                 Giá trên giờ
                         </Col>
                             <Col>
@@ -149,7 +155,24 @@ export default function DetailTeacher() {
                     <Container>
                         <Row>
                             <Col>
-                                <ReactTags tags={tags} readOnly={true} />
+                                <ReactTags tags={tags} readOnly={true} handleTagClick={(i) => {
+                                    if (localStorage.getItem('token')) {
+                                        const startdate = new Date();
+                                        const enddate = new Date();
+                                        setModalContent2({
+                                            teacherid: info.teacherid,
+                                            teacher: info.fullname,
+                                            skillid: tags[i].id,
+                                            skill: tags[i].text,
+                                            daypweek: 3,
+                                            hourpday: 3,
+                                            startdate: startdate.toISOString().substr(0, 10),
+                                            enddate: enddate.toISOString().substr(0, 10),
+                                            revenue: calculateTotalPrice(info.price, null, null, 3, 3)
+                                        })
+                                        setShow2(true);
+                                    }
+                                }} />
                             </Col>
                         </Row>
                     </Container>
@@ -166,8 +189,95 @@ export default function DetailTeacher() {
                     <Button variant='primary' onClick={() => setShow(false)}>Thoát</Button>
                 </Modal.Footer>
             </Modal>
+            <Modal show={show2} style={{ opacity: 1 }}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Đăng ký học</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <label>Người phụ trách:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    {modalContent2.teacher || 'John Smith'}<br></br>
+                    <label>Môn học / kỹ năng:&nbsp;&nbsp;&nbsp;</label>
+                    {modalContent2.skill || 'Math'}<br></br><hr></hr>
+                    <label>Số ngày trong tuần:&nbsp;</label>&nbsp;&nbsp;
+                        <select className='form-control-sm' defaultValue={modalContent2.daypweek}
+                        onChange={(e) => setModalContent2({
+                            ...modalContent2,
+                            daypweek: e.target.value,
+                            revenue: calculateTotalPrice(info.price, modalContent2.startdate, modalContent2.enddate, e.target.value, modalContent2.hourpday)
+                        })}>
+                        <option selected value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                        <option value={4}>4</option>
+                        <option value={5}>5</option>
+                        <option value={6}>6</option>
+                        <option value={7}>7</option>
+                    </select><br></br>
+                    <label>Số giờ trong ngày:&nbsp;&nbsp;&nbsp;</label>&nbsp;&nbsp;
+                        <select className='form-control-sm' defaultValue={modalContent2.hourpday}
+                        onChange={(e) => setModalContent2({
+                            ...modalContent2,
+                            hourpday: e.target.value,
+                            revenue: calculateTotalPrice(info.price, modalContent2.startdate, modalContent2.enddate, modalContent2.daypweek, e.target.value)
+                        })}>
+                        <option selected value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                        <option value={4}>4</option>
+                        <option value={5}>5</option>
+                        <option value={6}>6</option>
+                        <option value={7}>7</option>
+                        <option value={8}>8</option>
+                    </select><br></br>
+                    <label>Ngày bắt đầu:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>&nbsp;&nbsp;
+                        <input type='date' className='form-control-sm' value={modalContent2.startdate}
+                        onChange={(e) => setModalContent2({
+                            ...modalContent2,
+                            startdate: e.target.value,
+                            revenue: calculateTotalPrice(info.price, e.target.value, modalContent2.enddate, modalContent2.daypweek, modalContent2.hourpday)
+                        })}></input><br></br>
+                    <label>Ngày kết thúc:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>&nbsp;&nbsp;
+                        <input type='date' className='form-control-sm' value={modalContent2.enddate}
+                        onChange={(e) => setModalContent2({
+                            ...modalContent2,
+                            enddate: e.target.value,
+                            revenue: calculateTotalPrice(info.price, modalContent2.startdate, e.target.value, modalContent2.daypweek, modalContent2.hourpday)
+                        })}></input><br></br><hr></hr>
+                    <label>Thành tiền (đ):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>&nbsp;&nbsp;
+                        <u><b>{modalContent2.revenue}</b></u>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={() => sendRequest()} variant='danger'>Xác nhận</Button>
+                    <Button variant='primary' onClick={() => setShow2(false)}>Thoát</Button>
+                </Modal.Footer>
+            </Modal>
         </div >
     );
+
+    function sendRequest() {
+        const token = localStorage.getItem('token');
+        if (token != null) {
+            axios.post(config['server-domain'] + 'profile/create-request', {
+                data: modalContent2
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(ress => {
+                    if (ress.status === 200) {
+                        setShow2(false);
+                        setModalContent(ress.data.message);
+                        setShow(true);
+                    }
+                })
+                .catch(errr => {
+                    setShow2(false);
+                    setModalContent(errr.response.message);
+                    setShow(true);
+                });
+        }
+    }
 
     function getStyleAvatar(url) {
         if (url == null) {
@@ -276,7 +386,7 @@ export default function DetailTeacher() {
                         starRatedColor={contracts[i].rate < 3 ? 'red' : 'green'}
                     /><br></br>Đánh giá: {contracts[i].rate}/5
                 </Col>
-                <Col style={{'margin-left': '-50px'}}>
+                <Col style={{ 'margin-left': '-50px' }}>
                     <b>{contracts[i].description}</b>
                     <br></br>
                     Môn học: <i>{contracts[i].skill}</i> ({contracts[i].start} - {contracts[i].end})
@@ -306,4 +416,35 @@ export default function DetailTeacher() {
 
         setContractHTML(html);
     }
+}
+
+function calculateTotalPrice(price, startdate, enddate, dayperweek, hourperday) {
+
+    const priceperhour = price || 0;
+    const numberOfWeek = calculateWeeksBetween(new Date(startdate), new Date(enddate));
+
+    const hourperweek = hourperday * dayperweek;
+    const numberOfHour = hourperweek * numberOfWeek;
+    return abbreviateNumber(numberOfHour * priceperhour);
+}
+
+function calculateWeeksBetween(date1, date2) {
+
+    // The number of milliseconds in one week
+    var ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
+
+    // Convert both dates to milliseconds
+    var date1_ms = date1.getTime();
+    var date2_ms = date2.getTime();
+
+    // Calculate the difference in milliseconds
+    var difference_ms = date2_ms - date1_ms;
+    if (difference_ms < 0) difference_ms = 0;
+
+    // Convert back to weeks and return hole weeks
+    return Math.ceil(difference_ms / ONE_WEEK);
+}
+
+function abbreviateNumber(number) {
+    return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
