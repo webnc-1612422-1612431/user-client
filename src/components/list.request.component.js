@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Col, Row, Container, Modal } from 'react-bootstrap';
+import { Button, Pagination, Card, Col, Row, Container, Modal } from 'react-bootstrap';
 import config from '../config';
 import '../css/tags.css';
 
@@ -8,6 +8,7 @@ import firebase from '../firebase';
 const axios = require('axios');
 const myEmail = localStorage.getItem('email');
 const myName = localStorage.getItem('name');
+const profilePerPage = 2;
 var isTeacherView;
 var requestsArray;
 var flagArray;
@@ -56,7 +57,7 @@ export default function ListRequest() {
             }
         }
 
-        setupRequests(requestsArray);
+        setupRequests(requestsArray, 1);
     }
 
     return (
@@ -98,7 +99,7 @@ export default function ListRequest() {
         }
     }
 
-    function setupRequests(requests) {
+    function setupRequests(requests, currentPage) {
 
         // filter
         requests = requests.filter((x, i) => flagArray[i] === 1);
@@ -106,6 +107,14 @@ export default function ListRequest() {
         const requestRows = [];
 
         for (var i = 0; i < requests.length; i++) {
+
+            // filter for paging
+            const start = (currentPage - 1) * profilePerPage;
+            const end = start + profilePerPage - 1;
+            if (i < start || i > end) {
+                continue;
+            }
+
             const targetEmail = requests[i].email;
             const targetName = requests[i].fullname;
             const requestId = requests[i].id;
@@ -137,14 +146,14 @@ export default function ListRequest() {
                                 <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, 1, revenue)} hidden={requests[i].isaccept > 0}>Từ chối</Button>
                             </div> :
                             <div>
-                                <Button size="sm" onClick={() => { window.location.href = '/detail-teacher?email=' + targetEmail}}>Thông tin</Button>
+                                <Button size="sm" onClick={() => { window.location.href = '/detail-teacher?email=' + targetEmail }}>Thông tin</Button>
                                 <Button size="sm" variant='danger' onClick={() => handleRequest(requestId, -1, revenue)} hidden={requests[i].isaccept > 0}>Hủy yêu cầu</Button>
                             </div>
                     }
                 </Col>
             </Row>);
 
-            if (i !== requests.length - 1) {
+            if (i !== end && i != requests.length - 1) {
                 requestRows.push(<hr style={{ width: '93%' }}></hr>)
             }
         }
@@ -153,16 +162,45 @@ export default function ListRequest() {
             requestRows.push(<Row>Chưa có yêu cầu nào</Row>);
         }
 
+        // setup pagination
+        const paginationHTML = setupPagination(requests, currentPage);
+
         const html = <Card className="card-center">
             <Card.Header className="card-header">Danh sách yêu cầu</Card.Header>
-            <Card.Body style={{ 'max-height': '333px', overflow: 'hidden', 'overflowY': 'scroll' }}>
+            <Card.Body style={{ 'max-height': '350px', overflow: 'hidden', 'overflowY': 'scroll' }}>
                 <Container>
                     {requestRows}
                 </Container>
             </Card.Body>
+            <Card.Footer>
+                <center>
+                    <Pagination>
+                        {paginationHTML}
+                    </Pagination>
+                </center>
+            </Card.Footer>
         </Card>
 
         setRequestHTML(html);
+    }
+
+    function gotoPage(i) {
+        setupRequests(requestsArray, i);
+    }
+
+    function setupPagination(data, currentPage) {
+
+        const numberOfPage = Math.ceil(data.length / profilePerPage);
+
+        var resultHTML = [<Pagination.First onClick={() => gotoPage(1)} />, <Pagination.Prev onClick={() => gotoPage(currentPage === 1 ? 1 : (currentPage - 1))} />];
+        for (var i = 1; i <= numberOfPage; i++) {
+            const index = i;
+            resultHTML.push(<Pagination.Item onClick={() => gotoPage(index)} active={currentPage === index ? true : false}>{index}</Pagination.Item>)
+        }
+        resultHTML.push(<Pagination.Next onClick={() => gotoPage(currentPage === numberOfPage ? numberOfPage : (currentPage + 1))} />);
+        resultHTML.push(<Pagination.Last onClick={() => gotoPage(numberOfPage)} />);
+
+        return resultHTML;
     }
 
     function handleRequest(requestId, isAccept, revenue) {
