@@ -21,7 +21,7 @@ var banner = <div><section data-qa-section='hero'
                     track='' track-sublocation='hero' track-label='get_started_button' track-event='click'
                     event-registered='true'> Tìm giảng viên </a>
                     <div class='d-flex ml-md-5'><a data-qa='extra-cta' class='btn btn-default btn-sm m-0 ml-10'
-                        target='_blank' href='https://www.facebook.com/quang.nghia.1998'
+                        href='https://www.facebook.com/quang.nghia.1998'
                         track='' track-sublocation='hero' track-label='get_a_demo_button' track-event='click'
                         event-registered='true'> Liên hệ </a></div>
                 </div>
@@ -30,7 +30,7 @@ var banner = <div><section data-qa-section='hero'
                         class='mb-0 mr-0 btn btn-primary ' href='/list-teacher?major=all' track=''
                         track-sublocation='hero' track-label='get_started_button' track-event='click'
                         event-registered='true'> Tìm giảng viên </a>
-                    <div class='d-flex ml-md-5'><a data-qa='extra-cta' class='btn btn-default m-0 ml-10' target='_blank'
+                    <div class='d-flex ml-md-5'><a data-qa='extra-cta' class='btn btn-default m-0 ml-10'
                         href='https://www.facebook.com/quang.nghia.1998' track=''
                         track-sublocation='hero' track-label='get_a_demo_button' track-event='click'
                         event-registered='true'> Liên hệ </a></div>

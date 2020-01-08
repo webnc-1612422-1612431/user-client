@@ -153,7 +153,7 @@ export default function ListRequest() {
                 </Col>
             </Row>);
 
-            if (i !== end && i != requests.length - 1) {
+            if (i !== end && i !== requests.length - 1) {
                 requestRows.push(<hr style={{ width: '93%' }}></hr>)
             }
         }
